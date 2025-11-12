@@ -1,45 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LuongSkibidi</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LuongSkibidi — Hub</title>
+  <meta name="description" content="Trang hub scripts & projects của LuongSkibidi - chỉ hiển thị code để tham khảo, không tự chạy bất cứ cheat nào." />
   <style>
-    body {
-      background: linear-gradient(135deg, #111827, #1e293b);
-      font-family: "Poppins", sans-serif;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    :root{
+      --bg1:#071428; --bg2:#0f1724; --card:#0b1220; --accent1:#ff4d6d; --accent2:#fbbf24; --muted:#9aa4b2;
+      --glass: rgba(255,255,255,0.03);
     }
-    h1 {
-      font-size: 3rem;
-      background: linear-gradient(90deg, #ff4d6d, #ffb347);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#e6eef8}
+    body{background:radial-gradient(1200px 600px at 10% 10%, rgba(255,77,109,0.06), transparent), linear-gradient(180deg,var(--bg1),var(--bg2));display:flex;align-items:center;justify-content:center;padding:28px}
+
+    .frame{width:100%;max-width:1100px;border-radius:18px;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);box-shadow:0 10px 40px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+    header{display:flex;gap:16px;align-items:center}
+    .logo{width:84px;height:84px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#071022;background:linear-gradient(135deg,var(--accent1),var(--accent2));font-size:22px}
+    .title h1{margin:0;font-size:22px}
+    .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px}
+
+    /* HERO / AVATAR */
+    .hero{background:var(--glass);padding:16px;border-radius:12px}
+    .avatar-wrap{display:flex;align-items:center;gap:16px}
+    .avatar{
+      width:120px;height:120px;border-radius:14px;background:linear-gradient(135deg,var(--accent1),#ff8a5b);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center
     }
-    p { color: #9ca3af; font-size: 1.1rem; }
-    a {
-      margin-top: 20px;
-      text-decoration: none;
-      padding: 12px 25px;
-      background: linear-gradient(90deg, #ff4d6d, #ffb347);
-      border-radius: 12px;
-      color: white;
-      font-weight: 600;
-      transition: .2s;
-    }
-    a:hover { transform: scale(1.05); }
+    /* floating animation */
+    .avatar .face{width:72px;height:72px;border-radius:10px;background:#071428;display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .avatar{animation:float 4s ease-in-out infinite}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px) rotate(-2deg)}100%{transform:translateY(0)}}
+
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#071022;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:10px}
+
+    /* SCRIPTS LIST */
+    .scripts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .card h4{margin:0 0 6px;font-size:15px}
+    .card p{margin:0;color:var(--muted);font-size:12px}
+    .card .actions{display:flex;gap:8px;margin-top:10px}
+    .copy{background:rgba(255,255,255,0.03);border:none;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+
+    /* RIGHT SIDEBAR */
+    .sidebar{background:var(--glass);padding:14px;border-radius:12px;height:100%;display:flex;flex-direction:column;gap:12px}
+    .sidebar h3{margin:0 0 4px}
+    .toggle{display:flex;align-items:center;gap:8px}
+    .kbd{background:rgba(0,0,0,0.35);padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.02);font-size:13px}
+
+    /* MODAL */
+    .modal{position:fixed;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));display:flex;align-items:center;justify-content:center;padding:24px;visibility:hidden;opacity:0;transition:all .18s}
+    .modal.show{visibility:visible;opacity:1}
+    .modal .box{width:100%;max-width:980px;background:var(--card);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(2,6,23,0.7)}
+    .modal pre{max-height:60vh;overflow:auto;background:#071428;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:#cbd5e1}
+
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
+
+    @media(max-width:980px){.layout{grid-template-columns:1fr} .sidebar{order:2}}
   </style>
 </head>
 <body>
-  <h1>💫 LUONGSKIBIDI 💫</h1>
-  <p>Chào mừng đến web chính thức của Lương Skibidi.<br>Dự án, script, và mấy thứ troll chất lượng.</p>
-  <a href="https://github.com/luongdaynetroi" target="_blank">Xem GitHub</a>
+  <div class="frame">
+    <header>
+      <div class="logo">LS</div>
+      <div class="title"><h1>LuongSkibidi Hub</h1><p>Giao diện đẹp, chỉ **hiển thị** script để tham khảo — KHÔNG chạy trên trang này.</p></div>
+    </header>
+
+    <div class="layout">
+      <main>
+        <section class="hero">
+          <div class="avatar-wrap">
+            <div class="avatar" id="avatar">
+              <div class="face">LƯ</div>
+            </div>
+            <div>
+              <h2>Xin chào — Lương</h2>
+              <p style="margin-top:6px;color:var(--muted)">Click mấy nút bên dưới để mở modal xem code, copy URL hoặc download file tham khảo. Tôi sẽ không giúp bạn chạy cheat — chỉ để tham khảo / học code.</p>
+
+              <div class="controls" style="margin-top:12px">
+                <button class="btn" id="randomShow">Surprise me</button>
+                <button class="ghost" id="toggleAnim">Toggle Avatar Anim</button>
+                <button class="ghost" id="openAll">Mở tất cả (chỉ xem)</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style="margin-top:14px">
+          <h3 style="margin:6px 0">Scripts</h3>
+          <div class="scripts" id="scriptsGrid">
+            <!-- Cards inserted by JS -->
+          </div>
+        </section>
+
+        <footer>Hiển thị nguồn: GitHub/raw links. Luôn kiểm tra code trước khi dùng. © 2025 LuongSkibidi</footer>
+      </main>
+
+      <aside class="sidebar">
+        <div>
+          <h3>Quick info</h3>
+          <div style="color:var(--muted);font-size:13px">Root deploy: vercel/github pages — chỉ cần đặt file lên repo, Vercel build auto.</div>
+        </div>
+
+        <div>
+          <h3>Tools</h3>
+          <div class="toggle"><span class="kbd">Copy</span><span style="color:var(--muted)">: copy script URL to clipboard</span></div>
+          <div class="toggle"><span class="kbd">View</span><span style="color:var(--muted)">: fetch & show code text (CORS might block some hosts)</span></div>
+          <div class="toggle"><span class="kbd">Download</span><span style="color:var(--muted)">: save as .lua file</span></div>
+        </div>
+
+        <div>
+          <h3>Warnings</h3>
+          <div style="color:#fca5a5;font-size:13px">Tôi **không** hỗ trợ thực thi cheat/vi phạm ToS. Trang chỉ hiển thị code để học. Không chịu trách nhiệm khi bạn dùng sai.</div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <strong id="modalTitle">Script</strong>
+        <div style="display:flex;gap:8px">
+          <button class="copy" id="copyCode">Copy</button>
+          <button class="copy" id="downloadCode">Download</button>
+          <button class="copy" id="closeModal">Close</button>
+        </div>
+      </div>
+      <hr style="margin:10px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+      <pre id="codeView">Chưa load nội dung. Nhấn "View" trên một card để fetch code.</pre>
+    </div>
+  </div>
+
+  <script>
+    // List of scripts (names + raw URLs). Some are placeholders or user-provided links.
+    const SCRIPTS = [
+      {name: 'Aim FOV', url: 'https://raw.githubusercontent.com/ItsIYce/Iyce/refs/heads/main/main.lua', desc:'Aim/FOV script (view only)'},
+      {name: 'Fly Thịnh', url: 'https://raw.githubusercontent.com/thunhchk/Flythinh/refs/heads/main/Flythinhv1.lua', desc:'Fly script (view only)'},
+      {name: 'Speed Hub', url: 'https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua', desc:'Speed hub loader'},
+      {name: 'Infinite Yield (admin)', url: 'https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source', desc:'Popular admin commands (view only)'},
+      {name: 'Blox Fruits Master', url: 'https://raw.githubusercontent.com/KiddoHiru/BloxFruits/main/MasterHub.lua', desc:'Blox Fruits hub (view only)'},
+      {name: 'Hoho Hub', url: 'https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI', desc:'Misc hub'},
+      {name: 'Foxname Farm Diamond', url: 'https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameFarmdiamond.lua', desc:'Auto farm (view only)'},
+      {name: 'Quartyz Loader', url: 'https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Loader.lua', desc:'Loader - fruit config'},
+      {name: 'Gravity HUB', url: 'https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua', desc:'BloxFruit hub'},
+      {name: 'WallHop', url: 'https://raw.githubusercontent.com/ScpGuest666/Random-Roblox-script/refs/heads/main/Roblox%20WallHop%20V4%20script', desc:'Wallhop script'}
+    ];
+
+    const grid = document.getElementById('scriptsGrid');
+    const modal = document.getElementById('modal');
+    const codeView = document.getElementById('codeView');
+    const modalTitle = document.getElementById('modalTitle');
+    let currentScript = null;
+
+    function makeCard(s){
+      const el = document.createElement('div'); el.className='card';
+      const h = document.createElement('h4'); h.textContent = s.name; el.appendChild(h);
+      const p = document.createElement('p'); p.textContent = s.desc || ''; el.appendChild(p);
+      const act = document.createElement('div'); act.className='actions';
+      const btnView = document.createElement('button'); btnView.className='copy'; btnView.textContent='View';
+      const btnCopy = document.createElement('button'); btnCopy.className='copy'; btnCopy.textContent='Copy URL';
+      const btnDL = document.createElement('button'); btnDL.className='copy'; btnDL.textContent='Download';
+      act.appendChild(btnView); act.appendChild(btnCopy); act.appendChild(btnDL);
+      el.appendChild(act);
+
+      btnView.onclick = async ()=>{
+        currentScript = s;
+        modalTitle.textContent = s.name + ' — ' + s.url;
+        codeView.textContent = 'Loading...';
+        showModal(true);
+        try{
+          const resp = await fetch(s.url);
+          if(!resp.ok) throw new Error('HTTP ' + resp.status);
+          const text = await resp.text();
+          // sanitize a bit: limit length to avoid massive data
+          const snippet = text.length > 200000 ? text.slice(0,200000) + '\n\n...truncated...' : text;
+          codeView.textContent = snippet;
+        }catch(err){
+          codeView.textContent = 'Cannot fetch file (CORS or 404).\nURL: ' + s.url + '\nError: ' + err.message;
+        }
+      };
+
+      btnCopy.onclick = ()=>{ navigator.clipboard.writeText(s.url).then(()=> alert('Copied URL to clipboard')) };
+
+      btnDL.onclick = async ()=>{
+        try{
+          const resp = await fetch(s.url);
+          const text = resp.ok ? await resp.text() : '-- failed to fetch --';
+          const blob = new Blob([text], {type:'text/plain'});
+          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+          a.download = (s.name.replace(/[^a-z0-9\-]/gi,'_') || 'script') + '.lua';
+          document.body.appendChild(a); a.click(); a.remove();
+        }catch(e){ alert('Download failed: ' + e.message) }
+      };
+
+      return el;
+    }
+
+    for(const s of SCRIPTS){ grid.appendChild(makeCard(s)) }
+
+    // modal controls
+    document.getElementById('closeModal').onclick = ()=> showModal(false);
+    document.getElementById('copyCode').onclick = ()=>{
+      navigator.clipboard.writeText(codeView.textContent || '').then(()=> alert('Code copied'))
+    };
+    document.getElementById('downloadCode').onclick = ()=>{
+      const text = codeView.textContent || '';
+      const blob = new Blob([text], {type:'text/plain'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = (currentScript?.name.replace(/[^a-z0-9\-]/gi,'_') || 'script') + '.lua';
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+
+    function showModal(s){ if(s){ modal.classList.add('show') } else { modal.classList.remove('show') } }
+
+    // Random show button
+    document.getElementById('randomShow').onclick = ()=>{
+      const s = SCRIPTS[Math.floor(Math.random()*SCRIPTS.length)];
+      s && (document.querySelectorAll('.card').forEach(c=>c.classList.remove('highlight')));
+      // simulate clicking view
+      setTimeout(()=>{ document.querySelectorAll('.card').forEach((c,i)=>{ if(SCRIPTS[i]===s) c.querySelector('button').click() }) }, 120);
+    }
+
+    // Toggle avatar animation
+    let anim = true;
+    document.getElementById('toggleAnim').onclick = ()=>{
+      anim = !anim; document.getElementById('avatar').style.animation = anim ? 'float 4s ease-in-out infinite' : 'none';
+    }
+
+    // Open all => open each in sequence (view only)
+    document.getElementById('openAll').onclick = async ()=>{
+      for(const s of SCRIPTS){ currentScript = s; modalTitle.textContent = s.name + ' — ' + s.url; codeView.textContent = 'Loading...'; showModal(true);
+        try{ const resp = await fetch(s.url); const text = resp.ok ? await resp.text() : '-- failed to fetch --'; codeView.textContent = text.length>200000?text.slice(0,200000)+'\n\n...truncated...':text }catch(e){ codeView.textContent = 'Error: '+e.message }
+        await new Promise(r=>setTimeout(r, 650));
+      }
+    }
+
+    // small UX: press ESC to close modal
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') showModal(false) });
+  </script>
 </body>
 </html>
