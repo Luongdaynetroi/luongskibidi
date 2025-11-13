@@ -1,1 +1,403 @@
-print "down"
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LuongSkibidi — Hub</title>
+  <meta name="description" content="Trang hub scripts & projects của LuongSkibidi - Script and client" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#0a0a0a; --bg2:#1a1a2e; --bg3:#16213e; --card:#0f3460; --accent1:#e94560; --accent2:#0f3460; --accent3:#16213e; --muted:#a0a0a0; --text:#ffffff;
+      --glass: rgba(255,255,255,0.05); --glass-border: rgba(255,255,255,0.1);
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;margin:0;font-family:'Inter',sans-serif;color:var(--text);overflow-x:hidden}
+    body{background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));position:relative}
+    body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.03)"/></svg>') repeat;animation:particles 20s linear infinite;z-index:-1}
+
+    .container{max-width:1200px;margin:0 auto;padding:20px;min-height:100vh;display:flex;flex-direction:column}
+
+    header{text-align:center;margin-bottom:40px}
+    .logo{font-size:3rem;font-weight:700;background:linear-gradient(45deg,var(--accent1),#ff6b9d);background-clip:text;-webkit-background-clip:text;color:transparent;margin-bottom:10px}
+    .subtitle{color:var(--muted);font-size:1.1rem;margin-bottom:20px}
+
+    .search-bar{margin-bottom:30px;text-align:center}
+    .search-bar input{width:100%;max-width:400px;padding:12px 20px;border-radius:25px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text);font-size:1rem;backdrop-filter:blur(10px)}
+    .search-bar input:focus{outline:none;border-color:var(--accent1);box-shadow:0 0 20px rgba(233,69,96,0.3)}
+
+    .tabs{display:flex;justify-content:center;margin-bottom:30px}
+    .tab-btn{padding:12px 24px;border-radius:25px;background:var(--glass);border:1px solid var(--glass-border);color:var(--muted);cursor:pointer;margin:0 5px;transition:all 0.3s;font-weight:600}
+    .tab-btn.active{background:linear-gradient(45deg,var(--accent1),var(--accent2));color:white;border-color:var(--accent1);box-shadow:var(--shadow)}
+
+    .content{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+
+    .card{background:var(--glass);border:1px solid var(--glass-border);border-radius:15px;padding:20px;transition:all 0.3s;cursor:pointer;backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+    .card:hover{transform:translateY(-5px);border-color:var(--accent1);box-shadow:0 15px 35px rgba(0,0,0,0.4)}
+    .card h3{font-size:1.2rem;margin-bottom:10px;color:var(--text)}
+    .card p{color:var(--muted);font-size:0.9rem;margin-bottom:15px}
+    .card .icon{display:inline-block;width:20px;height:20px;margin-right:8px;vertical-align:middle}
+    .card .actions{display:flex;gap:10px}
+    .card .btn{padding:8px 16px;border-radius:20px;background:linear-gradient(45deg,var(--accent1),var(--accent2));color:white;border:none;cursor:pointer;font-size:0.9rem;transition:all 0.2s}
+    .card .btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(233,69,96,0.4)}
+    .card .btn.secondary{background:transparent;border:1px solid var(--glass-border);color:var(--muted)}
+    .card .btn.secondary:hover{background:var(--glass);color:var(--text)}
+
+    .custom-script{margin-top:30px;background:var(--glass);border:1px solid var(--glass-border);border-radius:15px;padding:20px;backdrop-filter:blur(10px)}
+    .custom-script h3{margin-bottom:15px}
+    .custom-script input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text);margin-bottom:15px}
+    .custom-script input:focus{outline:none;border-color:var(--accent1)}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:all 0.3s}
+    .modal.show{opacity:1;visibility:visible}
+    .modal .content{background:var(--card);border-radius:15px;width:100%;max-width:900px;max-height:80vh;overflow:hidden;border:1px solid var(--glass-border);box-shadow:var(--shadow)}
+    .modal header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid var(--glass-border)}
+    .modal header h2{font-size:1.5rem}
+    .modal .close{cursor:pointer;font-size:2rem;color:var(--muted);transition:color 0.2s}
+    .modal .close:hover{color:var(--accent1)}
+    .modal .body{padding:20px;max-height:60vh;overflow:auto}
+    .modal pre{background:#1e1e1e;padding:15px;border-radius:10px;font-family:'Courier New',monospace;font-size:0.9rem;color:#d4d4d4;white-space:pre-wrap;word-wrap:break-word}
+
+    @keyframes particles{0%{transform:translateY(0)}100%{transform:translateY(-100px)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .card{animation:fadeIn 0.5s ease-out}
+
+    @media(max-width:768px){.container{padding:10px}.content{grid-template-columns:1fr}.tabs{flex-direction:column}.tab-btn{margin:5px 0}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">LuongSkibidi Hub</div>
+      <div class="subtitle">Giao diện đẹp, script & client — Học code & tham khảo</div>
+    </header>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Tìm kiếm scripts...">
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="scripts">Scripts</button>
+      <button class="tab-btn" data-tab="executors">Executors</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="scripts-tab">
+        <!-- Scripts cards inserted by JS -->
+      </div>
+      <div class="tab-content" id="executors-tab">
+        <!-- Executor cards inserted by JS -->
+        <div class="custom-script">
+          <h3>Custom Script</h3>
+          <input type="text" id="customUrl" placeholder="Paste script URL here">
+          <button class="btn" id="executeCustom">Execute/View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="content">
+      <header>
+        <h2 id="modalTitle">Script</h2>
+        <span class="close" id="closeModal">&times;</span>
+      </header>
+      <div class="body">
+        <pre id="codeView">Chưa load nội dung. Nhấn "View" trên một card để fetch code.</pre>
+        <div style="margin-top:15px;display:flex;gap:10px">
+          <button class="btn" id="copyCode">Copy Code</button>
+          <button class="btn secondary" id="downloadCode">Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // List of scripts
+    const SCRIPTS = [
+      {name: 'aim FOV', url: 'https://raw.githubusercontent.com/ItsIYce/Iyce/refs/heads/main/main.lua', desc:'View code'},
+      {name: 'BRHaveen', url: 'https://pastefy.app/d8yUjGW0/raw', desc:'View code'},
+      {name: 'mOS(giống IY)', url: 'https://raw.githubusercontent.com/formidy/morfOS/refs/heads/main/main.lua', desc:'View code'},
+      {name: 'Aim LSM', url: 'https://raw.githubusercontent.com/learningpythonuntilimakeanapi-art/lns-hub-free/refs/heads/main/obfuscated%20lns%20free.lua', desc:'View code'},
+      {name: 'Thinh Limited', url: 'https://raw.githubusercontent.com/thunhchk/thinhlimeted/refs/heads/main/tthinhlimeted.lua', desc:'View code'},
+      {name: 'godmode ALL game', url: 'https://raw.githubusercontent.com/Rawbr10/Roblox-Scripts/refs/heads/main/God%20Mode%20Script%20Universal', desc:'View code'},
+      {name: 'Bất tử 99 đêm', url: 'https://raw.githubusercontent.com/ProBaconHub/DATABASE/refs/heads/main/99%20Nights%20in%20the%20Forest/Infinite%20Health.lua', desc:'View code'},
+      {name: 'Maru Hub', url: 'https://raw.githubusercontent.com/thunhchk/Maruvietsub/refs/heads/main/maruhubthinh.txt', desc:'View code'},
+      {name: 'mm2 Tora', url: 'https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/mm2', desc:'View code'},
+      {name: 'MM2 Hub', url: 'https://raw.githubusercontent.com/NexusScripts212/Roblox/refs/heads/main/Mm2', desc:'View code'},
+      {name: 'Farm Chest Thinh Lo', url: 'https://raw.githubusercontent.com/thunhchk/Farmchest/refs/heads/main/thinhtp.txt', desc:'View code'},
+      {name: 'Cat Egg v6', url: 'https://raw.githubusercontent.com/thunhchk/Categgv6/refs/heads/main/categgv6beta.lua', desc:'View code'},
+      {name: 'Speed Hub', url: 'https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua', desc:'View code'},
+      {name: 'Nhấn để copy key speed hub', url: 'setclipboard("rMChVgMZYJYHMGNtMvYkvDKasUFztRuG")', desc:'Execute directly'},
+      {name: 'Hop Server', url: 'https://raw.githubusercontent.com/thunhchk/Hopsever/refs/heads/main/categghop.txt', desc:'View code'},
+      {name: 'Banana Hub', url: 'https://raw.githubusercontent.com/kimprobloxdz/Banana-Free/refs/heads/main/Protected_5609200582002947.lua.txt', desc:'View code'},
+      {name: 'Foxname 99 Đêm', url: 'https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua', desc:'View code'},
+      {name: 'Tigy', url: 'https://raw.githubusercontent.com/Tigyiscute/tigystealabrainrotscript/refs/heads/main/TigysScript', desc:'View code'},
+      {name: 'Saki Hub', url: 'https://saki-hub.vercel.app/pvb.lua', desc:'View code'},
+      {name: 'Fly Thịnh', url: 'https://raw.githubusercontent.com/thunhchk/Flythinh/refs/heads/main/Flythinhv1.lua', desc:'View code'},
+      {name: '99 Đêm Thịnh', url: 'https://raw.githubusercontent.com/thunhchk/99nigth/refs/heads/main/99nightthinh.lua', desc:'View code'},
+      {name: 'Kaitun Thịnh', url: 'https://raw.githubusercontent.com/thunhchk/Kaitunbf/refs/heads/main/thinhkaitunbf.txt', desc:'View code'},
+      {name: 'Doremon v2', url: 'https://raw.githubusercontent.com/KiddoHiru/BloxFruits/main/MasterHub.lua', desc:'View code'},
+      {name: 'Zee Hub', url: 'https://zuwz.me/Ls-Zee-Hub', desc:'View code'},
+      {name: 'W Azure', url: 'https://api.luarmor.net/files/v3/loaders/85e904ae1ff30824c1aa007fc7324f8f.lua', desc:'View code'},
+      {name: 'Hoho Hub', url: 'https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI', desc:'View code'},
+      {name: 'Blue X Hub', url: 'https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua', desc:'View code'},
+      {name: 'Blue X tìm trái cây', url: 'https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/FindFruits.lua', desc:'View code'},
+      {name: 'Quantum ', url: 'https://raw.githubusercontent.com/flazhy/QuantumOnyx/refs/heads/main/QuantumOnyx.lua', desc:'View code'},
+      {name: 'Thunder Hub', url: 'https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua', desc:'View code'},
+      {name: 'Tboy Roblox', url: 'https://raw.githubusercontent.com/TBoyRoblox727/TBoyRobloxYTB/refs/heads/main/TBeoMainBF.lua', desc:'View code'},
+      {name: 'Xeter V3', url: 'https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs/heads/main/Main.lua', desc:'View code'},
+      {name: 'Yiner Hub', url: 'https://raw.githubusercontent.com/Dev-Yiner/Yiner-Hub/refs/heads/main/KaitunOfTheSkies.lua', desc:'View code'},
+      {name: 'Ngọc Bổng', url: 'https://raw.githubusercontent.com/ngocbonggaming/script/refs/heads/main/NgocBongVn.lua', desc:'View code'},
+      {name: 'Hiru Hub', url: 'https://raw.githubusercontent.com/KiddoHiru/BloxFruits/main/Source.lua', desc:'View code'},
+      {name: 'OMG Hub', url: 'https://raw.githubusercontent.com/Omgshit/Scripts/main/MainLoader.lua', desc:'View code'},
+      {name: 'Zis Roblox', url: 'https://raw.githubusercontent.com/LuaCrack/Zis/refs/heads/main/ZisBVn', desc:'View code'},
+      {name: 'Đạt Thg', url: 'https://raw.githubusercontent.com/LuaCrack/DatThg/refs/heads/main/DatThgV2', desc:'View code'},
+      {name: 'HNC Hub', url: 'https://raw.githubusercontent.com/hnc-roblox/HNCHubOnTop/refs/heads/main/HNC_Roblox.lua', desc:'View code'},
+      {name: 'Teddy Hub', url: 'https://raw.githubusercontent.com/Teddyseetink/Haidepzai/refs/heads/main/TeddyHub.lua', desc:'View code'},
+      {name: 'Tổng hợp Tboy Roblox', url: 'https://raw.githubusercontent.com/TBoyRoblox727/TBoyRobloxYTB/refs/heads/main/AllScriptBF.txt', desc:'View code'},
+      {name: 'Tổng hợp Tuấn Anh IOS', url: 'https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua', desc:'View code'},
+      {name: 'Astra Hub', url: 'https://raw.githubusercontent.com/Overgustx2/Main/refs/heads/main/BloxFruits_25.html', desc:'View code'},
+      {name: 'FixLag TDT', url: 'https://raw.githubusercontent.com/TRANDUYTHINH/scriptdt/refs/heads/main/Output%20(3).lua', desc:'View code'},
+      {name: 'Hop Boss(key)', url: 'repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")\nloadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/Haidepzai/refs/heads/main/TEDDYHUB-FREEMIUM"))()', desc:'Execute directly'},
+      {name: 'TDT Hub', url: 'https://pandadevelopment.net/virtual/file/2a2ea2a6d621379a', desc:'View code'},
+      {name: 'OK hub', url: 'https://raw.githubusercontent.com/fakekuri/Okhubhere/refs/heads/main/MainBloxFruit.lua', desc:'View code'},
+      {name: 'KaiTun TDT', url: 'https://raw.githubusercontent.com/TRANDUYTHINH/scriptdt/refs/heads/main/7bc2bab10110ef77%20(1).lua', desc:'View code'},
+      {name: 'Farm Chest TDT', url: 'https://raw.githubusercontent.com/TRANDUYTHINH/scriptdt/refs/heads/main/Output%20(5).lua', desc:'View code'},
+      {name: 'TrongNguyen Hub', url: 'https://raw.githubusercontent.com/trongnguyenhubbloxfruit/Script-BloxFruit/refs/heads/main/TrongNguyenSkidder.lua', desc:'View code'},
+      {name: 'Kaitun prehistoric', url: 'https://raw.githubusercontent.com/Xero2409/XeroHub/refs/heads/main/main.lua', desc:'View code'},
+      {name: 'Violece District pc', url: 'https://raw.githubusercontent.com/G06Raider/VD/refs/heads/main/main.lua', desc:'View code'},
+      {name: 'violence district pe', url: 'https://gist.githubusercontent.com/imhimelnanocruzscript-gif/bd47612c0473adcfe197f3cdc72f8f62/raw/0c570048c6f006b14a2f8ccae65a3d87be6b3dae/gistfile1.txt', desc:'View code'},
+      {name: 'Fly animation', url: 'local UserInputService = game:GetService("UserInputService")\nlocal isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled\nif isMobile then\n    loadstring(game:HttpGet("https://raw.githubusercontent.com/396abc/Script/refs/heads/main/MobileFly.lua"))()\nelse\n    loadstring(game:HttpGet("https://raw.githubusercontent.com/396abc/Script/refs/heads/main/FlyR15.lua"))()\nend', desc:'Execute directly'},
+      {name: 'WallHop', url: 'https://raw.githubusercontent.com/ScpGuest666/Random-Roblox-script/refs/heads/main/Roblox%20WallHop%20V4%20script', desc:'View code'},
+      {name: 'Infinite Yield', url: 'https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source', desc:'View code'},
+      {name: 'Sonic Animation', url: 'https://pastebin.com/raw/dzAfxfmz', desc:'View code'},
+      {name: 'HitBBox', url: 'https://pastefy.app/ItfO0tdg/raw', desc:'View code'},
+      {name: 'Troll R15', url: 'https://raw.githubusercontent.com/Boxten-Keyes/music/refs/heads/main/music%23%5Bscripts%5D/music%23%5Bmiscellaneous%5D/music%23%5Bfe%20r15%20animation%20player%5D.lua', desc:'View code'},
+      {name: 'lọ nằm🐿️', url: 'https://raw.githubusercontent.com/ShutUpJamesTheLoserAlt/fes/refs/heads/main/e', desc:'View code'},
+      {name: 'tua ngược', url: 'https://mscripts.vercel.app/scfiles/reverse-script.lua', desc:'View code'},
+      {name: 'move hand PE', url: 'https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty45.lua', desc:'View code'},
+      {name: 'Aim', url: 'https://apigetunx.vercel.app/UNX.lua', desc:'View code'},
+      {name: 'FixLag DucLuong', url: 'https://raw.githubusercontent.com/Luongdaynetroi/Free/refs/heads/main/FixLag/roblox/.lua', desc:'View code'},
+      {name: 'JumpScare', url: 'https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua', desc:'View code'},
+      {name: 'Ghost animation R6', url: 'pcall(function()\n    local s = game:HttpGet(\'https://raw.githubusercontent.com/Fe-ProjectR/FE-Files/refs/heads/main/Fe%20gale.lua\', true)\n    local f = loadstring(s)\n    if f then f(\'cool\') end\nend)', desc:'Execute directly'},
+      {name: 'angle visual', url: 'https://raw.githubusercontent.com/nicolasbarbosa323/the-angel/refs/heads/main/The%20Angel.txt', desc:'View code'},
+      {name: 'Fly R6', url: 'https://gist.githubusercontent.com/JungleScripts/775c6366d91d39fe2633c5805a1d0c23/raw/c8de949402393510a27bcf4482c957b6c3bed2c2/gistfile1.txt', desc:'View code'},
+      {name: 'copy console', url: 'https://raw.githubusercontent.com/Luongdaynetroi/CopyConsoleF9/refs/heads/main/.lua', desc:'View code'},
+      {name: 'keyboard PE', url: 'https://raw.githubusercontent.com/Xxtan31/Ata/main/deltakeyboardcrack.txt', desc:'View code'},
+      {name: 'lọ v1🐿️', url: 'pcall(function()\n    local s = game:HttpGet(\'https://pastefy.app/wa3v2Vgm/raw\', true)\n    local f = loadstring(s)\n    if f then f(\'Spider Script\') end\nend)', desc:'Execute directly'},
+      {name: 'the flash', url: 'https://rawscripts.net/raw/Universal-Script-Wally-West-Roblox-51462', desc:'View code'},
+      {name: 'vn hub', url: 'https://raw.githubusercontent.com/replit8173/VietnamHub/refs/heads/main/VietnamseHub.lua', desc:'View code'},
+      {name: 'GiantFe', url: 'https://rawscripts.net/raw/Just-a-baseplate.-Just-A-Baseplate-Huge-Giant-39127', desc:'View code'},
+      {name: 'Fling', url: 'https://rawscripts.net/raw/Universal-Script-Fling-Gui-Op-47914', desc:'View code'},
+      {name: 'invisible FE', url: 'https://rawscripts.net/raw/Universal-Script-Awesome-Invisible-man-21074', desc:'View code'},
+      {name: 'Fps Boost', url: 'pcall(function()\n    getgenv().GraphicsTuner = {\n        Settings = {\n            GraphicsDestruction = {\n                RemoveParticles = true,\n                RemoveTrails = true,\n                RemoveBeams = true,\n                RemoveLights = true,\n                RemoveTextures = true,\n                RemoveDecals = true,\n                RemoveClothes = true,\n                RemoveAccessories = true,\n                RemoveSky = true,\n                RemoveAtmosphere = true,\n                RemoveClouds = true,\n                RemovePostEffects = true,\n                MuteSounds = true,\n                DisableExplosions = true,\n            },\n            Graphics = {\n                MinimalQuality = true,\n                NoShadows = true,\n                NoReflections = true,\n                SimplifyMaterials = true,\n                CompatibilityMode = true,\n                FullBright = true,\n                RemoveFog = true,\n            },\n            Performance = {\n                UnlockFPS = true,\n                FPSCap = 999,\n                DevConsoleBoost = true,\n                GarbageCollection = true,\n                GCInterval = 30,\n                ClearNilInstances = true,\n                OptimizePhysics = true,\n                SimplifyMeshes = true,\n                MinimalCollision = true,\n                BatchSize = 1000,\n            },\n            Player = {\n                ProtectSelf = true,\n                SimplifyOthers = false,\n            },\n            Display = {\n                ShowFPS = true,\n                ShowMemory = true,\n                ShowPing = true,\n                ShowDestroyed = true,\n                Position = "TopRight",\n                Transparency = 0.15,\n            }\n        }\n    }\n    if type(safeLoad) == "function" then\n        safeLoad("https://raw.githubusercontent.com/Diffone7/r/refs/heads/main/GraphicsTuner/dotrblx")\n    else\n        local success, body = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/Diffone7/r/refs/heads/main/GraphicsTuner/dotrblx", true) end)\n        if success and type(body) == "string" then\n            local f, e = loadstring(body)\n            if f then pcall(f) end\n        end\n    end\nend)', desc:'Execute directly'},
+      {name: 'H4x', url: 'https://raw.githubusercontent.com/H4xScripts/Loader/refs/heads/main/loader.lua', desc:'View code'},
+      {name: 'Blue x', url: 'https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua', desc:'View code'},
+      {name: 'Tokaruun', url: 'https://raw.githubusercontent.com/tokaruun/plantvsbrainrot/refs/heads/main/script.lua', desc:'View code'},
+      {name: 'HieuDRG', url: 'https://raw.githubusercontent.com/phanhieu18032011-rgb/HieuDRG/refs/heads/main/HieuDRGHubtonghop%20(2).lua', desc:'View code'},
+      {name: 'TheMiMic', url: 'https://raw.githubusercontent.com/Ukrubojvo/AntiLua/run/main.lua', desc:'View code'},
+      {name: '77wiki pre', url: 'https://raw.githubusercontent.com/areyourealforme/77wiki/refs/heads/main/premium/violencedistrict.lua', desc:'View code'},
+      {name: 'Auto Race Ghoul/Cyborg TDT', url: 'getgenv().Team = "Marines"\ngetgenv().Hide_UI = false\n_G.Config = {\n    Main = {\n        ["Auto Start"] = true,\n        ["Choose Mode"] = "Auto Ghoul", --// Auto Cyborg\n        ["Buy Sword Legendary"] = true,\n        ["Buy Haki Color"] = true\n    },\n    Misc = {\n        ["Select Weapon"] = "Melee",\n        ["Tweem Speed"] = 350,\n        ["FPS Boost"] = false,\n        ["Auto Rejoin"] = true,\n        ["White Screen"] = false\n    }\n}\nloadstring(game:HttpGet("https://raw.githubusercontent.com/TRANDUYTHINH/scriptdt/refs/heads/main/autoracequy-robot.txt"))()', desc:'Execute directly'},
+      {name: 'Foxname', url: 'https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua', desc:'View code'},
+      {name: 'Lan HUB Auto candy lẹ lẹ không fix', url: 'https://raw.githubusercontent.com/Wrate/99-Night-In-The-Forest/refs/heads/main/MainLoader', desc:'View code'},
+      {name: 'Dupe candy(fast)', url: 'https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/dupecandyidklol.lua', desc:'View code'},
+      {name: 'giant big jacket', url: 'https://pastefy.app/nuefMy0Y/raw', desc:'View code'},
+      {name: 'emotes UI', url: 'https://api.droply.fun/raw/Emotes.lua', desc:'View code'},
+      {name: 'Nhấn để copy key emotes UI', url: 'setclipboard("DROPLY-88UIP@!")', desc:'Execute directly'},
+      {name: 'Description Aim(no safe)', url: 'https://raw.githubusercontent.com/blackowl1231/Z3US/refs/heads/main/main.lua', desc:'View code'},
+      {name: 'Fish it 1', url: 'https://api.junkie-development.de/api/v1/luascripts/public/f9ecec6fa3ba4e7717a62cc0c25915644ad4ad7a01b09afb77a42226210884d7/download', desc:'View code'},
+      {name: 'Fish it 2(keyless)', url: 'https://raw.githubusercontent.com/Kenniel123/Fish-It/refs/heads/main/Fish%20It', desc:'View code'},
+      {name: 'heitor(rivals)', url: 'https://pastebin.com/raw/cbszJ0pm', desc:'View code'},
+      {name: 'Tong Hop nhu cac', url: 'https://raw.githubusercontent.com/hluuvn/Games/refs/heads/main/Roblox.lua', desc:'View code'},
+      {name: 'The Rake', url: 'https://raw.githubusercontent.com/ZZINSWARE/The-Rake-Remastered/refs/heads/main/ZZINSWARE', desc:'View code'},
+      {name: 'Auto diamond', url: 'getgenv().hop = "old"\ngetgenv().reducelag = true\ngetgenv().blackscreen = false\ngetgenv().AutoFarm = false\ngetgenv().autoexecuter = true\ngetgenv().WebhookURL = "" --If not used do not write anything\nloadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameFarmdiamond.lua"))()', desc:'Execute directly'},
+      {name: 'H4x', url: 'https://raw.githubusercontent.com/H4xScripts/Loader/refs/heads/main/loader.lua', desc:'View code'},
+      {name: 'AV hub', url: 'https://get-avth-ontop.netlify.app/my-paste/script.lua', desc:'View code'},
+      {name: 'Auto Bounty TDT', url: 'getgenv().Team = "Marines"\ngetgenv().Hide_UI = false\n_G.Config = {\n    Main = {\n        ["Auto Start"] = true,\n        ["Buy Sword Legendary"] = true,\n        ["Buy Haki Color"] = true\n    },\n    Misc = {\n        ["Select Weapon"] = "Melee",\n        ["Tweem Speed"] = 350,\n        ["FPS Boost"] = false,\n        ["Auto Rejoin"] = true,\n        ["White Screen"] = false\n    }\n}\nloadstring(game:HttpGet("https://raw.githubusercontent.com/TRANDUYTHINH/scriptdt/refs/heads/main/autobounty.txt"))()', desc:'Execute directly'},
+      {name: 'Quarzty', url: 'getgenv().Mode = "OneClick"\ngetgenv().Setting = {\n    ["Team"] = "Pirates", -- Options "Pirates", "Marines"\n    ["FucusOnLevel"] = true,\n    ["Fruits"] = {  -- setting for fruits u want\n        ["Primary"] = { -- if current fruit is not in this list, eat/buy\n            "Dough-Dough",\n            "Dragon-Dragon",\n            "Buddha-Buddha",\n            -- u can configs add mores/remove and must end with , (comma symbol)\n        },\n        ["Normal"] = { -- it just a normal fruit list\n            "Flame-Flame",\n            "Light-Light",\n            "Magma-Magma",\n            -- u can configs add mores/remove and must end with , (comma symbol)\n        }\n        -- run this for get all fruit name `local t={};for _,v in pairs(game.ReplicatedStorage.Remotes.CommF_:InvokeServer("GetFruits"))do table.insert(t,`"{v.Name}"`)end;setclipboard(table.concat(t, "\n"))`\n    },\n    ["IdleCheck"] = 150, -- every (x) seconds if not moving rejoin\n};\nloadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Loader.lua"))()', desc:'Execute directly'},
+      {name: '149 script all game', url: 'https://pastefy.app/Eo5kbR4u/raw', desc:'View code'},
+      {name: 'Skibidi HUB', url: 'https://pastefy.app/3wbcKaDv/raw', desc:'View code'},
+      {name: 'chili hub', url: 'https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua', desc:'View code'},
+      {name: 'Auto ghoul race v1+v2', url: 'https://pandadevelopment.net/virtual/file/98663465d41d463c', desc:'View code'},
+      {name: 'Gravity HUB', url: 'https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua', desc:'View code'},
+      {name: 'BloxTrap?', url: 'getgenv().autosetup = {\n    path = \'Bloxstrap\',\n    setup = true --> init after installation\n}\n\nloadstring(game:HttpGet(\'https://raw.githubusercontent.com/new-qwertyui/Bloxstrap/refs/heads/main/Main/Bloxstrap.lua\', true))()', desc:'Execute directly'},
+      {name: 'fe schlep', url: 'https://pastebin.com/raw/U9pCGZSM', desc:'View code'},
+      {name: 'BloxSCript', url: 'https://github.com/Luongdaynetroi/ScriptTongHop/blob/main/BloxScript', desc:'View code'},
+      {name: 'catgirl FE', url: 'https://raw.githubusercontent.com/ilikeices/script/refs/heads/main/cat', desc:'View code'},
+      {name: 'AnimaitonR15', url: 'https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Fe%20Better%3F%20Movement', desc:'View code'},
+      {name: 'Two Sword visual', url: 'https://raw.githubusercontent.com/nicolasbarbosa323/the-angel/refs/heads/main/Kirito%20Blades.txt', desc:'View code'},
+      {name: 'Big human sword visual', url: 'https://raw.githubusercontent.com/gitezgitgit/Dark-Titan/refs/heads/main/DARK%20TITAN%20SCRIPT%20SUPER%20RARE.txt', desc:'View code'},
+      {name: 'Pickaxe', url: 'https://raw.githubusercontent.com/ProBypasserHax1/Idkkk/refs/heads/main/Red%20Sword%20Pickaxe.txt', desc:'View code'},
+      {name: 'Sin Dragon', url: 'https://raw.githubusercontent.com/gitezgitgit/Sin-Dragon/refs/heads/main/Sin%20Dragon.lua.txt', desc:'View code'},
+      {name: 'Soul reaper', url: 'https://rawscripts.net/raw/Universal-Script-Soul-Reaper-55330', desc:'View code'},
+      {name: 'Hien hub', url: 'https://pastefy.app/LlkfAKqJ/raw', desc:'View code'},
+      {name: 'tele player', url: 'https://rawscripts.net/raw/Universal-Script-Tp-menu-65222', desc:'View code'},
+      {name: 'Gojo', url: 'https://pastefy.app/OS8Atb5c/raw', desc:'View code'},
+      {name: 'Shader DLuong', url: 'https://raw.githubusercontent.com/Luongdaynetroi/shaderfl/refs/heads/main/mini.lua', desc:'View code'},
+      {name: 'Anti AFK Dluong', url: 'https://raw.githubusercontent.com/Luongdaynetroi/AntiAfk/refs/heads/main/Free/.lua', desc:'View code'},
+      {name: 'Auto Fishing', url: 'https://raw.githubusercontent.com/trongnguyenhubbloxfruit/Fish-Script/refs/heads/main/Trdzhub.lua', desc:'View code'}
+    ];
+
+    // List of executors with download links
+    const EXECUTORS = [
+      {name: 'Krnl', url: 'https://krnl.ca/', desc: 'Popular Roblox executor'},
+      {name: 'Delta', url: 'https://deltaexploits.net/', desc: 'Advanced Roblox exploit'},
+      {name: 'Trident (TDT)', url: 'https://tridentexploits.com/', desc: 'High-performance executor'},
+      {name: 'Tengu (TNG)', url: 'https://tengu.gg/', desc: 'Reliable Roblox tool'}
+    ];
+
+    const scriptsContainer = document.getElementById('scripts-tab');
+    const executorsContainer = document.getElementById('executors-tab');
+    const modal = document.getElementById('modal');
+    const codeView = document.getElementById('codeView');
+    const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('searchInput');
+    let currentScript = null;
+    let allScripts = [...SCRIPTS];
+
+    function createIcon(type) {
+      const icons = {
+        script: '<svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/></svg>',
+        download: '<svg viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>',
+        copy: '<svg viewBox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg>',
+        eye: '<svg viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/></svg>'
+      };
+      return `<span class="icon">${icons[type] || ''}</span>`;
+    }
+
+    function makeCard(s, isExecutor = false){
+      const el = document.createElement('div'); el.className='card';
+      const h = document.createElement('h3'); h.innerHTML = createIcon(isExecutor ? 'download' : 'script') + s.name; el.appendChild(h);
+      const p = document.createElement('p'); p.textContent = s.desc || ''; el.appendChild(p);
+      const act = document.createElement('div'); act.className='actions';
+
+      if (!isExecutor) {
+        const btnView = document.createElement('button'); btnView.className='btn'; btnView.innerHTML = createIcon('eye') + 'View';
+        const btnCopy = document.createElement('button'); btnCopy.className='btn secondary'; btnCopy.innerHTML = createIcon('copy') + 'Copy URL';
+        const btnDL = document.createElement('button'); btnDL.className='btn secondary'; btnDL.innerHTML = createIcon('download') + 'Download';
+        act.appendChild(btnView); act.appendChild(btnCopy); act.appendChild(btnDL);
+
+        btnView.onclick = async ()=>{
+          currentScript = s;
+          modalTitle.textContent = s.name;
+          codeView.innerHTML = '<div style="text-align:center;padding:20px;">Loading...</div>';
+          showModal(true);
+          if (s.url.includes('loadstring') || s.url.includes('setclipboard') || s.url.includes('pcall') || s.url.includes('getgenv')) {
+            codeView.textContent = s.url;
+          } else {
+            try{
+              const resp = await fetch(s.url);
+              if(!resp.ok) throw new Error('HTTP ' + resp.status);
+              const text = await resp.text();
+              const snippet = text.length > 200000 ? text.slice(0,200000) + '\n\n...truncated...' : text;
+              codeView.textContent = snippet;
+            }catch(err){
+              codeView.textContent = 'Cannot fetch file (CORS or 404).\nURL: ' + s.url + '\nError: ' + err.message;
+            }
+          }
+        };
+
+        btnCopy.onclick = ()=>{ navigator.clipboard.writeText(s.url).then(()=> alert('Copied URL to clipboard')) };
+
+        btnDL.onclick = async ()=>{
+          try{
+            const resp = await fetch(s.url);
+            const text = resp.ok ? await resp.text() : '-- failed to fetch --';
+            const blob = new Blob([text], {type:'text/plain'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = (s.name.replace(/[^a-z0-9\-]/gi,'_') || 'script') + '.lua';
+            document.body.appendChild(a); a.click(); a.remove();
+          }catch(e){ alert('Download failed: ' + e.message) }
+        };
+      } else {
+        const btnDL = document.createElement('button'); btnDL.className='btn'; btnDL.innerHTML = createIcon('download') + 'Download';
+        act.appendChild(btnDL);
+        btnDL.onclick = ()=>{ window.open(s.url, '_blank') };
+      }
+
+      el.appendChild(act);
+      return el;
+    }
+
+    function renderScripts(scripts) {
+      scriptsContainer.innerHTML = '';
+      scripts.forEach(s => scriptsContainer.appendChild(makeCard(s)));
+    }
+
+    function renderExecutors() {
+      executorsContainer.innerHTML = '';
+      EXECUTORS.forEach(e => executorsContainer.appendChild(makeCard(e, true)));
+      const customDiv = document.createElement('div');
+      customDiv.className = 'custom-script';
+      customDiv.innerHTML = `
+        <h3>Custom Script</h3>
+        <input type="text" id="customUrl" placeholder="Paste script URL here">
+        <button class="btn" id="executeCustom">Execute/View</button>
+      `;
+      executorsContainer.appendChild(customDiv);
+    }
+
+    renderScripts(allScripts);
+    renderExecutors();
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = ()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+      };
+    });
+
+    // Search
+    searchInput.oninput = ()=>{
+      const query = searchInput.value.toLowerCase();
+      const filtered = allScripts.filter(s => s.name.toLowerCase().includes(query) || s.desc.toLowerCase().includes(query));
+      renderScripts(filtered);
+    };
+
+    // Custom execute
+    document.addEventListener('click', e => {
+      if (e.target.id === 'executeCustom') {
+        const url = document.getElementById('customUrl').value.trim();
+        if(!url) return alert('Please enter a URL');
+        currentScript = {name: 'Custom Script', url};
+        modalTitle.textContent = 'Custom Script';
+        codeView.innerHTML = '<div style="text-align:center;padding:20px;">Loading...</div>';
+        showModal(true);
+        (async ()=>{
+          try{
+            const resp = await fetch(url);
+            const text = resp.ok ? await resp.text() : '-- failed to fetch --';
+            codeView.textContent = text.length > 200000 ? text.slice(0,200000) + '\n\n...truncated...' : text;
+          }catch(err){
+            codeView.textContent = 'Cannot fetch file (CORS or 404).\nURL: ' + url + '\nError: ' + err.message;
+          }
+        })();
+      }
+    });
+
+    // Modal
+    document.getElementById('closeModal').onclick = ()=> showModal(false);
+    document.getElementById('copyCode').onclick = ()=>{
+      navigator.clipboard.writeText(codeView.textContent || '').then(()=> alert('Code copied'))
+    };
+    document.getElementById('downloadCode').onclick = ()=>{
+      const text = codeView.textContent || '';
+      const blob = new Blob([text], {type:'text/plain'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = (currentScript?.name.replace(/[^a-z0-9\-]/gi,'_') || 'script') + '.lua';
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+
+    function showModal(s){ if(s){ modal.classList.add('show') } else { modal.classList.remove('show') } }
+
+    // ESC to close
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') showModal(false) });
+  </script>
+</body>
+</html>
