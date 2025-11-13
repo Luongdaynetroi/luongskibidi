@@ -14,10 +14,16 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0d1117;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+            background-attachment: fixed;
             color: #c9d1d9;
             height: 100vh;
             overflow: hidden;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         .header {
             background-color: #161b22;
@@ -30,7 +36,15 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #58a6ff;
+            background: linear-gradient(45deg, #58a6ff, #ff6b9d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
         }
         .search-bar {
             flex: 1;
@@ -59,6 +73,12 @@
         }
         .btn:hover {
             background-color: #2ea043;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn:active {
+            transform: translateY(0);
         }
         .container {
             display: flex;
@@ -86,9 +106,12 @@
         }
         .repo-item:hover {
             background-color: #21262d;
+            transform: translateX(5px);
+            transition: all 0.2s ease;
         }
         .repo-item.active {
             background-color: #30363d;
+            border-left: 3px solid #58a6ff;
         }
         .main-content {
             flex: 1;
@@ -263,6 +286,11 @@
         }
         .modal.show {
             display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
         .modal-content {
             background-color: #161b22;
@@ -270,6 +298,7 @@
             border-radius: 6px;
             width: 400px;
             max-width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
         .modal h3 {
             margin-bottom: 15px;
@@ -391,6 +420,7 @@
                     <div class="file-path" id="filePath">sample-repo / README.md</div>
                 </div>
                 <div class="file-actions">
+                    <button class="btn-secondary" id="newFileBtn">New File</button>
                     <button class="btn-secondary" id="rawBtn">Raw</button>
                     <button class="btn-secondary" id="editBtn">Edit</button>
                     <button class="btn" id="commitBtn">Commit</button>
@@ -480,6 +510,31 @@
             <div class="modal-actions">
                 <button class="btn-secondary" id="cancelLogin">Cancel</button>
                 <button class="btn" id="submitLogin">Sign In</button>
+                <button class="btn-secondary" id="switchToRegister">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h3>Sign Up</h3>
+            <div class="form-group">
+                <label for="regUsername">Username</label>
+                <input type="text" id="regUsername">
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelRegister">Cancel</button>
+                <button class="btn" id="submitRegister">Sign Up</button>
+                <button class="btn-secondary" id="switchToLogin">Sign In</button>
             </div>
         </div>
     </div>
@@ -548,6 +603,21 @@
         </div>
     </div>
 
+    <!-- New File Modal -->
+    <div class="modal" id="newFileModal">
+        <div class="modal-content">
+            <h3>Create New File</h3>
+            <div class="form-group">
+                <label for="fileName">File Name</label>
+                <input type="text" id="fileName" placeholder="e.g., script.js, index.html">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelNewFile">Cancel</button>
+                <button class="btn" id="submitNewFile">Create File</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Raw View -->
     <div class="raw-view" id="rawView">
         <div class="raw-header">
@@ -565,10 +635,25 @@
         let isEditing = false;
         let isStarred = false;
         let starCount = 42;
+        let currentUser = null;
+        let userData = {};
 
-        // Sample file contents
-        const fileContents = {
-            'README.md': `# Sample Repository
+        // Load user data from localStorage
+        function loadUserData() {
+            const data = localStorage.getItem('codehub_userdata');
+            if (data) {
+                userData = JSON.parse(data);
+            } else {
+                // Initialize with sample data
+                userData = {
+                    'demo': {
+                        password: 'demo',
+                        repos: {
+                            'sample-repo': {
+                                description: 'A sample repository',
+                                isPrivate: false,
+                                files: {
+                                    'README.md': `# Sample Repository
 
 This is a sample repository for demonstration purposes.
 
@@ -581,7 +666,7 @@ This is a sample repository for demonstration purposes.
 ## Getting Started
 
 Clone this repo and start coding!`,
-            'index.html': `<!DOCTYPE html>
+                                    'index.html': `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -593,7 +678,7 @@ Clone this repo and start coding!`,
     <p>This is a sample HTML file.</p>
 </body>
 </html>`,
-            'script.js': `// Sample JavaScript file
+                                    'script.js': `// Sample JavaScript file
 console.log('Hello from sample repo!');
 
 function greet(name) {
@@ -601,7 +686,114 @@ function greet(name) {
 }
 
 console.log(greet('World'));`
-        };
+                                },
+                                commits: [
+                                    {message: 'Initial commit', author: 'demo', timestamp: Date.now()},
+                                    {message: 'Add README and basic structure', author: 'demo', timestamp: Date.now() - 86400000}
+                                ],
+                                branches: ['main', 'develop']
+                            }
+                        }
+                    }
+                };
+                saveUserData();
+            }
+        }
+
+        function saveUserData() {
+            localStorage.setItem('codehub_userdata', JSON.stringify(userData));
+        }
+
+        function loadCurrentRepo() {
+            if (currentUser && userData[currentUser] && userData[currentUser].repos[currentRepo]) {
+                const repo = userData[currentUser].repos[currentRepo];
+                fileContents = repo.files;
+                // Update UI
+                renderFileList();
+                renderCommits();
+                renderBranches();
+            }
+        }
+
+        function renderFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Object.keys(fileContents).forEach(filename => {
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.dataset.file = filename;
+                li.textContent = filename;
+                fileList.appendChild(li);
+            });
+        }
+
+        function renderCommits() {
+            const commitList = document.getElementById('commitList');
+            commitList.innerHTML = '';
+            if (currentUser && userData[currentUser].repos[currentRepo]) {
+                const commits = userData[currentUser].repos[currentRepo].commits;
+                commits.forEach(commit => {
+                    const li = document.createElement('li');
+                    li.className = 'commit-item';
+                    li.innerHTML = `
+                        <div class="commit-avatar">${commit.author.slice(0,2).toUpperCase()}</div>
+                        <div class="commit-info">
+                            <div class="commit-message">${commit.message}</div>
+                            <div class="commit-meta">${commit.author} committed ${new Date(commit.timestamp).toLocaleString()}</div>
+                        </div>
+                    `;
+                    commitList.appendChild(li);
+                });
+            }
+        }
+
+        function renderBranches() {
+            const branchSelect = document.getElementById('branchSelect');
+            const branchList = document.getElementById('branchList');
+            branchSelect.innerHTML = '';
+            branchList.innerHTML = '';
+            if (currentUser && userData[currentUser].repos[currentRepo]) {
+                const branches = userData[currentUser].repos[currentRepo].branches;
+                branches.forEach(branch => {
+                    // Branch select
+                    const option = document.createElement('option');
+                    option.value = branch;
+                    option.textContent = branch;
+                    branchSelect.appendChild(option);
+
+                    // Branch list
+                    const li = document.createElement('li');
+                    li.className = 'file-item' + (branch === currentBranch ? ' active' : '');
+                    li.textContent = branch;
+                    branchList.appendChild(li);
+                });
+            }
+        }
+
+        function renderRepoList() {
+            const repoList = document.getElementById('repoList');
+            repoList.innerHTML = '';
+            if (currentUser && userData[currentUser].repos) {
+                Object.keys(userData[currentUser].repos).forEach(repoName => {
+                    const li = document.createElement('li');
+                    li.className = 'repo-item' + (repoName === currentRepo ? ' active' : '');
+                    li.dataset.repo = repoName;
+                    li.textContent = repoName;
+                    repoList.appendChild(li);
+                });
+            }
+        }
+
+        let fileContents = {};
+
+        // Initialize app
+        loadUserData();
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser && userData[savedUser]) {
+            currentUser = savedUser;
+            loadCurrentRepo();
+            renderRepoList();
+        }
 
         // Initialize Monaco Editor
         require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
@@ -637,9 +829,18 @@ console.log(greet('World'));`
         });
 
         document.getElementById('submitLogin').addEventListener('click', () => {
-            // Simulate login
-            alert('Logged in successfully!');
-            document.getElementById('loginModal').classList.remove('show');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (userData[username] && userData[username].password === password) {
+                currentUser = username;
+                localStorage.setItem('currentUser', username);
+                showLoginModal(false);
+                loadCurrentRepo();
+                renderRepoList();
+                alert(`Welcome back, ${username}!`);
+            } else {
+                alert('Invalid username or password');
+            }
         });
 
         document.getElementById('newRepoBtn').addEventListener('click', () => {
@@ -652,14 +853,62 @@ console.log(greet('World'));`
 
         document.getElementById('submitNewRepo').addEventListener('click', () => {
             const repoName = document.getElementById('repoName').value;
-            if (repoName) {
-                const li = document.createElement('li');
-                li.className = 'repo-item';
-                li.textContent = repoName;
-                li.dataset.repo = repoName;
-                document.getElementById('repoList').appendChild(li);
+            const repoDesc = document.getElementById('repoDesc').value;
+            if (repoName && currentUser) {
+                if (!userData[currentUser].repos) userData[currentUser].repos = {};
+                userData[currentUser].repos[repoName] = {
+                    description: repoDesc || '',
+                    isPrivate: false,
+                    files: {
+                        'README.md': `# ${repoName}\n\n${repoDesc || 'A new repository'}\n\n## Getting Started\n\nStart coding!`
+                    },
+                    commits: [{message: 'Initial commit', author: currentUser, timestamp: Date.now()}],
+                    branches: ['main']
+                };
+                saveUserData();
+                renderRepoList();
                 alert(`Repository "${repoName}" created!`);
                 document.getElementById('newRepoModal').classList.remove('show');
+            } else {
+                alert('Please sign in first');
+            }
+        });
+
+        // Register functionality
+        document.getElementById('switchToRegister').addEventListener('click', () => {
+            document.getElementById('loginModal').classList.remove('show');
+            document.getElementById('registerModal').classList.add('show');
+        });
+
+        document.getElementById('switchToLogin').addEventListener('click', () => {
+            document.getElementById('registerModal').classList.remove('show');
+            document.getElementById('loginModal').classList.add('show');
+        });
+
+        document.getElementById('cancelRegister').addEventListener('click', () => {
+            document.getElementById('registerModal').classList.remove('show');
+        });
+
+        document.getElementById('submitRegister').addEventListener('click', () => {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            if (username && password) {
+                if (userData[username]) {
+                    alert('Username already exists');
+                    return;
+                }
+                userData[username] = {
+                    password: password,
+                    email: email,
+                    repos: {}
+                };
+                saveUserData();
+                alert('Account created successfully! Please sign in.');
+                document.getElementById('registerModal').classList.remove('show');
+                document.getElementById('loginModal').classList.add('show');
+            } else {
+                alert('Please fill in all fields');
             }
         });
 
@@ -693,20 +942,18 @@ console.log(greet('World'));`
         });
 
         document.getElementById('commitBtn').addEventListener('click', () => {
-            if (isEditing && editor) {
+            if (isEditing && editor && currentUser && userData[currentUser].repos[currentRepo]) {
                 fileContents[currentFile] = editor.getValue();
+                userData[currentUser].repos[currentRepo].files = fileContents;
                 // Add to commit history
-                const commitList = document.getElementById('commitList');
-                const newCommit = document.createElement('li');
-                newCommit.className = 'commit-item';
-                newCommit.innerHTML = `
-                    <div class="commit-avatar">JD</div>
-                    <div class="commit-info">
-                        <div class="commit-message">Update ${currentFile}</div>
-                        <div class="commit-meta">John Doe committed just now</div>
-                    </div>
-                `;
-                commitList.insertBefore(newCommit, commitList.firstChild);
+                const newCommit = {
+                    message: `Update ${currentFile}`,
+                    author: currentUser,
+                    timestamp: Date.now()
+                };
+                userData[currentUser].repos[currentRepo].commits.unshift(newCommit);
+                saveUserData();
+                renderCommits();
                 alert('Changes committed successfully!');
                 isEditing = false;
                 editor.updateOptions({ readOnly: true });
@@ -737,34 +984,33 @@ console.log(greet('World'));`
 
         document.getElementById('submitNewBranch').addEventListener('click', () => {
             const branchName = document.getElementById('branchName').value;
-            if (branchName) {
-                // Add to branch select
-                const branchSelect = document.getElementById('branchSelect');
-                const option = document.createElement('option');
-                option.value = branchName;
-                option.textContent = branchName;
-                branchSelect.appendChild(option);
-
-                // Add to branches tab
-                const branchList = document.getElementById('branchList');
-                const li = document.createElement('li');
-                li.className = 'file-item';
-                li.textContent = branchName;
-                branchList.appendChild(li);
-
+            if (branchName && currentUser && userData[currentUser].repos[currentRepo]) {
+                if (userData[currentUser].repos[currentRepo].branches.includes(branchName)) {
+                    alert('Branch already exists');
+                    return;
+                }
+                userData[currentUser].repos[currentRepo].branches.push(branchName);
+                saveUserData();
+                renderBranches();
                 alert(`Branch "${branchName}" created!`);
                 document.getElementById('newBranchModal').classList.remove('show');
+            } else {
+                alert('Please select a repository first');
             }
         });
 
-        // File search
+        // File search with debounce
+        let searchTimeout;
         document.getElementById('fileSearch').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('#fileList .file-item');
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'block' : 'none';
-            });
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = e.target.value.toLowerCase();
+                const items = document.querySelectorAll('#fileList .file-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(query) ? 'block' : 'none';
+                });
+            }, 300);
         });
 
         // Star/Fork functionality
@@ -800,6 +1046,43 @@ console.log(greet('World'));`
                 collaboratorList.appendChild(li);
                 alert(`Collaborator "${username}" added with ${role} permissions!`);
                 document.getElementById('addCollaboratorModal').classList.remove('show');
+            }
+        });
+
+        // New file functionality
+        document.getElementById('newFileBtn').addEventListener('click', () => {
+            document.getElementById('newFileModal').classList.add('show');
+        });
+
+        document.getElementById('cancelNewFile').addEventListener('click', () => {
+            document.getElementById('newFileModal').classList.remove('show');
+        });
+
+        document.getElementById('submitNewFile').addEventListener('click', () => {
+            const fileName = document.getElementById('fileName').value;
+            if (fileName && currentUser && userData[currentUser].repos[currentRepo]) {
+                if (fileContents[fileName]) {
+                    alert('File already exists');
+                    return;
+                }
+                // Create empty file
+                fileContents[fileName] = '';
+                userData[currentUser].repos[currentRepo].files = fileContents;
+                saveUserData();
+                renderFileList();
+                // Switch to new file
+                currentFile = fileName;
+                document.getElementById('filePath').textContent = `${currentRepo} / ${currentFile}`;
+                if (editor) {
+                    editor.setValue('');
+                    editor.updateOptions({ language: getLanguage(currentFile), readOnly: false });
+                }
+                isEditing = true;
+                document.getElementById('editBtn').textContent = 'View';
+                alert(`File "${fileName}" created!`);
+                document.getElementById('newFileModal').classList.remove('show');
+            } else {
+                alert('Please select a repository first');
             }
         });
     </script>
