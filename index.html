@@ -23,6 +23,13 @@
 
     .layout{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px}
 
+    /* Tabs */
+    .tabs{display:flex;gap:0;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
+    .tab-btn{padding:8px 16px;background:none;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+    .tab-btn.active{color:#e6eef8;border-bottom-color:var(--accent1)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+
     /* HERO / AVATAR */
     .hero{background:var(--glass);padding:16px;border-radius:12px}
     .avatar-wrap{display:flex;align-items:center;gap:16px}
@@ -97,9 +104,24 @@
         </section>
 
         <section style="margin-top:14px">
-          <h3 style="margin:6px 0">Scripts</h3>
-          <div class="scripts" id="scriptsGrid">
-            <!-- Cards inserted by JS -->
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="scripts">Scripts</button>
+            <button class="tab-btn" data-tab="executors">Executors</button>
+          </div>
+          <div class="tab-content active" id="scripts-tab">
+            <div class="scripts" id="scriptsGrid">
+              <!-- Cards inserted by JS -->
+            </div>
+          </div>
+          <div class="tab-content" id="executors-tab">
+            <div class="scripts" id="executorsGrid">
+              <!-- Executor cards inserted by JS -->
+            </div>
+            <div style="margin-top:20px;padding:16px;background:var(--glass);border-radius:12px">
+              <h4 style="margin:0 0 10px">Custom Script</h4>
+              <input type="text" id="customUrl" placeholder="Paste script URL here" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#e6eef8;margin-bottom:10px">
+              <button class="btn" id="executeCustom">Execute/View</button>
+            </div>
           </div>
         </section>
 
@@ -272,6 +294,14 @@
       {name: 'BananHubKeySys (Local)', url: 'local ui = {}\n\nwarn("cam")\n\nlocal ts = game:GetService("TweenService")\n\nfunction protectGui(GUI)\n    local completed = false\n    if syn and syn.protect_gui then\n        pcall(function()\n            syn.protect_gui(GUI)\n            GUI.Parent = game:GetService("CoreGui")\n            completed = true\n        end)\n    elseif gethui then\n        pcall(function()\n            GUI.Parent = gethui()\n            completed = true\n        end)\n    elseif game.CoreGui:FindFirstChild("RobloxGui") then\n        pcall(function()\n            GUI.Parent = game.CoreGui.RobloxGui\n            completed = true\n        end)\n    else\n        pcall(function()\n            GUI.Parent = game:GetService("CoreGui")\n            completed = true\n        end)\n    end\n    if not completed then\n        GUI.Parent = game.Players.LocalPlayer.PlayerGui\n    end\nend\n\n\nui.CreateKeySystem = function(discord, theme, title, keyVar, destroyVar)\n\n\t--\n\tlocal Blur = Instance.new("BlurEffect", game:GetService("Lighting"))\n\tBlur.Size = 0\n\t\n\tts:Create(Blur, TweenInfo.new(.4, Enum.EasingStyle.Quint), {Size = 24}):Play()\n\tlocal oldFov = game:GetService("Workspace").Camera.FieldOfView\n\tts:Create(game:GetService("Workspace").Camera, TweenInfo.new(.4, Enum.EasingStyle.Quint), {FieldOfView = oldFov - 20}):Play()\n\t--\n\t\n\tif not theme then\n\t\ttheme = {\n\t\t\t["MainColor"] = Color3.fromRGB(255, 255, 255),\n\t\t\t["KeyUIColor"] = Color3.fromRGB(149, 149, 149),\n\t\t\t["KeyUIBorderColor"] = Color3.fromRGB(27, 42, 53),\n\t\t\t["KeyLoginTextBoxColor"] = Color3.fromRGB(255, 255, 255),\n\t\t\t["KeyLoginTextColor"] = Color3.fromRGB(0, 0, 0),\n\t\t\t["TextButtonColor"] = Color3.fromRGB(170, 170, 170),\n\t\t\t["TextButtonTextColor"] = Color3.fromRGB(0, 0, 0)\n\t\t}\n\tend\n\t\n\tlocal KeyLogin = Instance.new("ScreenGui")\n\tlocal Main = Instance.new("Frame")\n\tlocal ImageUiCorner = Instance.new("UICorner")\n\tlocal FrameUICorner = Instance.new("UICorner")\n\n\n\tKeyLogin.Enabled = false\n\tKeyLogin.Name = "KeyLoginReal"\n\tprotectGui(KeyLogin)\n\tKeyLogin.ZIndexBehavior = Enum.ZIndexBehavior.Sibling\n\n\tMain.Name = "Main"\n\tMain.Parent = KeyLogin\n\tMain.AnchorPoint = Vector2.new(1, 0)\n\tMain.BackgroundColor3 = theme["MainColor"]\n\tMain.Position = UDim2.new(0.637653112, 0, 0.203301102, 0)\n\tMain.Size = UDim2.new(0.276595742, 0, 0.59334296, 0)\n\n\tFrameUICorner.CornerRadius = UDim.new(0, 5)\n\tFrameUICorner.Name = "FrameUICorner"\n\tFrameUICorner.Parent = Main\n\n\n\tlocal originalMainSize = Main.Size\n\n\tMain.Size = UDim2.new(0.277,0,0,0)\n\tMain.BackgroundTransparency = 1\n\tFrameUICorner.CornerRadius = UDim.new(0,5)\n\n\tKeyLogin.Enabled = true\n\n\tts:Create(Main, TweenInfo.new(1, Enum.EasingStyle.Quint), {Size = originalMainSize, BackgroundTransparency = 0}):Play()\n\ttask.wait(1)\n\n\tlocal KeyUI = Instance.new("Frame")\n\tlocal TextBox = Instance.new("TextBox")\n\tlocal UITextSizeConstraint = Instance.new("UITextSizeConstraint")\n\tlocal TextButton = Instance.new("TextButton")\n\tlocal UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")\n\n\t--Properties:\n\n\tKeyUI.Name = "KeyUI"\n\tKeyUI.Parent = Main\n\tKeyUI.AnchorPoint = Vector2.new(0.5, 0)\n\tKeyUI.BackgroundColor3 = theme["KeyUIColor"]\n\tKeyUI.Position = UDim2.new(0.5, 0, 0.0250000004, 0)\n\tKeyUI.Size = UDim2.new(0, 0, 0.95, 0)\n\n\tTextBox.Parent = KeyUI\n\tTextBox.BackgroundColor3 = theme["KeyLoginTextBoxColor"]\n\tTextBox.BackgroundTransparency = 0.900\n\tTextBox.Position = UDim2.new(0.225845605, 0, 0.369597793, 0)\n\tTextBox.Size = UDim2.new(0.545224667, 0, 0.142152995, 0)\n\tTextBox.Font = Enum.Font.SourceSans\n\tTextBox.PlaceholderColor3 = theme["KeyLoginTextColor"]\n\tTextBox.PlaceholderText = "Enter Key"\n\tTextBox.Text = ""\n\tTextBox.TextColor3 = theme["KeyLoginTextColor"]\n\tTextBox.TextScaled = true\n\tTextBox.TextSize = 25.000\n\tTextBox.TextWrapped = true\n\n\tUITextSizeConstraint.Parent = TextBox\n\tUITextSizeConstraint.MaxTextSize = 25\n\n\tTextButton.Parent = KeyUI\n\tTextButton.BackgroundColor3 = theme["TextButtonColor"]\n\tTextButton.BorderSizePixel = 0\n\tTextButton.Position = UDim2.new(0.258039206, 0, 0.591498554, 0)\n\tTextButton.Size = UDim2.new(0.484886885, 0, 0.13504535, 0)\n\tTextButton.Font = Enum.Font.FredokaOne\n\tTextButton.Text = "Login"\n\tTextButton.TextColor3 = theme["TextButtonTextColor"]\n\tTextButton.TextScaled = true\n\tTextButton.TextSize = 31.000\n\tTextButton.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)\n\tTextButton.TextStrokeTransparency = 0.000\n\tTextButton.TextWrapped = true\n\n\tUITextSizeConstraint_2.Parent = TextButton\n\tUITextSizeConstraint_2.MaxTextSize = 31\n\n\tts:Create(KeyUI, TweenInfo.new(1, Enum.EasingStyle.Quint), {Size = UDim2.new(0.95, 0, 0.95, 0)}):Play()\n\n\t--\n\n\tlocal Input = nil\n\n\tTextButton.MouseButton1Click:Connect(function()\n\t\tInput = TextBox.Text\n\t\t_G[keyVar] = TextBox.Text\n\tend)\n\n\tif discord then\n\t\tlocal copyLink = discord\n\t\tif type(discord) ~= "string" then\n\t\t\tcopyLink = discord.realLink\n\t\t\tdiscord = discord.displayLink\n\t\tend\n\t\ttask.wait(.35)\n\t\ttask.delay(.1, function()\n\t\t\tts:Create(TextBox, TweenInfo.new(.35, Enum.EasingStyle.Quint), {Position = UDim2.new(0.226, 0,0.178, 0)}):Play()\n\t\t\ttask.wait(.1)\n\t\t\tts:Create(TextButton, TweenInfo.new(.35, Enum.EasingStyle.Quint), {Position = UDim2.new(0.258, 0,0.378, 0)}):Play()\n\t\tend)\n\t\t\n\t\tlocal Discord = Instance.new("Frame")\n\t\tlocal UICorner = Instance.new("UICorner")\n\t\tlocal TextLabel = Instance.new("TextLabel")\n\t\tlocal UITextSizeConstraint = Instance.new("UITextSizeConstraint")\n\t\tlocal TextButton = Instance.new("TextButton")\n\t\tlocal UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")\n\n\t\t--Properties:\n\n\t\tDiscord.Name = "Discord"\n\t\tDiscord.Parent = KeyUI\n\t\tDiscord.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\t\tDiscord.Position = UDim2.new(0.0447725654, 0, 0.63684541, 0)\n\t\tDiscord.Size = UDim2.new(0.934254229, 0, 0.264404565, 0)\n\n\t\tUICorner.Parent = Discord\n\n\t\tTextLabel.Parent = Discord\n\t\tTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\t\tTextLabel.Position = UDim2.new(0.0760451257, 0, 0.0860215053, 0)\n\t\tTextLabel.Size = UDim2.new(0.849840283, 0, 0.408602148, 0)\n\t\tTextLabel.Font = Enum.Font.SourceSans\n\t\tTextLabel.Text = "Key Here: "..discord\n\t\tTextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)\n\t\tTextLabel.TextScaled = true\n\t\tTextLabel.TextSize = 35.000\n\t\tTextLabel.TextWrapped = true\n\n\t\tUITextSizeConstraint.Parent = TextLabel\n\t\tUITextSizeConstraint.MaxTextSize = 35\n\n\t\tTextButton.Parent = Discord\n\t\tTextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\t\tTextButton.Position = UDim2.new(0.2441414, 0, 0.580645144, 0)\n\t\tTextButton.Size = UDim2.new(0.50834924, 0, 0.365591407, 0)\n\t\tTextButton.Font = Enum.Font.SourceSans\n\t\tTextButton.Text = "Copy"\n\t\tTextButton.TextColor3 = Color3.fromRGB(0, 0, 0)\n\t\tTextButton.TextScaled = true\n\t\tTextButton.TextSize = 29.000\n\t\tTextButton.TextWrapped = true\n\n\t\tUITextSizeConstraint_2.Parent = TextButton\n\t\tUITextSizeConstraint_2.MaxTextSize = 29\n\n\t\tTextButton.MouseButton1Click:Connect(function()\n\t\t\tif setclipboard then\n\t\t\t\tsetclipboard("https://"..copyLink)\n\t\t\tend\n\t\tend)\n\n\tend\n\t\n\t\n\tif title then\n\t\ttask.wait(.35)\n\t\ttask.delay(.05, function()\n\t\t\tts:Create(TextBox, TweenInfo.new(.35, Enum.EasingStyle.Quint), {Position = UDim2.new(0.226, 0,0.25, 0)}):Play()\n\t\t\ttask.wait(.1)\n\t\t\tts:Create(TextButton, TweenInfo.new(.35, Enum.EasingStyle.Quint), {Position = UDim2.new(0.258, 0,0.45, 0)}):Play()\n\t\tend)\n\t\tlocal TextLabel = Instance.new("TextLabel")\n\t\tlocal UITextSizeConstraint = Instance.new("UITextSizeConstraint")\n\n\t\t--Properties:\n\n\t\tTextLabel.Parent = KeyUI\n\t\tTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\t\tTextLabel.Position = UDim2.new(0.106617935, 0, 0.0378132015, 0)\n\t\tTextLabel.Size = UDim2.new(0.781864822, 0, 0.157554999, 0)\n\t\tTextLabel.Font = Enum.Font.FredokaOne\n\t\tTextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)\n\t\tTextLabel.TextScaled = true\n\t\tTextLabel.TextSize = 32.000\n\t\tTextLabel.TextWrapped = true\n\t\tTextLabel.Text = title\n\n\t\tUITextSizeConstraint.Parent = TextLabel\n\t\tUITextSizeConstraint.MaxTextSize = 32\n\tend\n\n\ttask.spawn(function()\n\t\trepeat task.wait() until _G[destroyVar]\n\n\t\tts:Create(Blur, TweenInfo.new(1, Enum.EasingStyle.Cubic), {Size = 0}):Play()\n\t\tts:Create(game:GetService("Workspace").Camera, TweenInfo.new(1, Enum.EasingStyle.Cubic), {FieldOfView = oldFov}):Play()\n\t\tBlur:Destroy()\n\t\n\t\t\n\t\tts:Create(KeyUI, TweenInfo.new(.25, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 0, 0.95, 0)}):Play()\n\t\ttask.wait(.25)\n\t\tts:Create(KeyUI, TweenInfo.new(.25, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}):Play()\n\t\ttask.wait(.15)\n\t\tts:Create(Main, TweenInfo.new(.45, Enum.EasingStyle.Quint), {Size = UDim2.new(0.27, 0, 0, 0), BackgroundTransparency = 1}):Play()\n\t\ttask.wait(.45)\n\t\t\n\t\tpcall(function()\n\t\t\tKeyLogin:Destroy()\n\t\tend)\n\tend)\n\t\n\treturn --Input:gsub(" ","")\n\nend\n\nui.CreateMain = function()\n\tlocal EggplantHub = Instance.new("ScreenGui")\n\tEggplantHub.Name = "EggplantHub"\n\tprotectGui(EggplantHub)\n\tEggplantHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling\n\tlocal ScrollingFrame = Instance.new("ScrollingFrame")\n\tScrollingFrame.Parent = EggplantHub\n\tScrollingFrame.Active = true\n\tScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tScrollingFrame.Position = UDim2.new(0.147305608, 0, 0.199710563, 0)\n\tScrollingFrame.Size = UDim2.new(0.740986168, 0, 0.599131703, 0)\n\tScrollingFrame.ScrollBarThickness = 10\n\tScrollingFrame.AutomaticCanvasSize  = Enum.AutomaticSize.Y\n\tlocal UIListLayout = Instance.new("UIListLayout")\n\tUIListLayout.Parent = ScrollingFrame\n\tUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder\n\treturn ScrollingFrame\nend\n\nui.CreateSection = function(parent, title)\n\tlocal EXAMPLESECTION = Instance.new("TextLabel")\n\tlocal UITextSizeConstraint = Instance.new("UITextSizeConstraint")\n\n\tEXAMPLESECTION.Name = title\n\tEXAMPLESECTION.Parent = parent\n\tEXAMPLESECTION.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tEXAMPLESECTION.Position = UDim2.new(-7.13161654e-08, 0, 0, 0)\n\tEXAMPLESECTION.Size = UDim2.new(0.98773092, 0, 0.200000003, 0)\n\tEXAMPLESECTION.Font = Enum.Font.SourceSans\n\tEXAMPLESECTION.Text = title\n\tEXAMPLESECTION.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tEXAMPLESECTION.TextScaled = true\n\tEXAMPLESECTION.TextSize = 64.000\n\tEXAMPLESECTION.TextWrapped = true\n\tEXAMPLESECTION.TextColor3 = Color3.fromRGB(255, 0, 0)\n\n\tUITextSizeConstraint.Parent = EXAMPLESECTION\n\tUITextSizeConstraint.MaxTextSize = 64\n\t\n\treturn EXAMPLESECTION\n\nend\n\nui.CreateButton = function(parent, name, callback)\n\tlocal EXAMPLEBUTTON = Instance.new("TextButton")\n\tlocal UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")\n\t\n\tEXAMPLEBUTTON.Name = name\n\tEXAMPLEBUTTON.Parent = parent\n\tEXAMPLEBUTTON.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tEXAMPLEBUTTON.Position = UDim2.new(-3.30538406e-08, 0, 0.200000048, 0)\n\tEXAMPLEBUTTON.Size = UDim2.new(0.986916959, 0, 0.200000003, 0)\n\tEXAMPLEBUTTON.Font = Enum.Font.SourceSans\n\tEXAMPLEBUTTON.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tEXAMPLEBUTTON.TextScaled = true\n\tEXAMPLEBUTTON.TextSize = 73.000\n\tEXAMPLEBUTTON.TextWrapped = true\n\tEXAMPLEBUTTON.Text = name\n\n\tUITextSizeConstraint_2.Parent = EXAMPLEBUTTON\n\tUITextSizeConstraint_2.MaxTextSize = 73\n\t\n\tEXAMPLEBUTTON.MouseButton1Click:Connect(function()\n\t\tcallback()\n\tend)\n\t\nend\n\nui.CreateBHUBPAID = function(override)\n\t\n\t--\n\tlocal Blur = Instance.new("BlurEffect", game:GetService("Lighting"))\n\tBlur.Size = 0\n\n\tts:Create(Blur, TweenInfo.new(.4, Enum.EasingStyle.Quint), {Size = 24}):Play()\n\tlocal oldFov = game:GetService("Workspace").Camera.FieldOfView\n\tts:Create(game:GetService("Workspace").Camera, TweenInfo.new(.4, Enum.EasingStyle.Quint), {FieldOfView = oldFov - 20}):Play()\n\t--\n\t\n\t\n\tlocal BuyKey = Instance.new("ScreenGui")\n\tlocal Frame = Instance.new("Frame")\n\tlocal BH = Instance.new("TextLabel")\n\tlocal Paid = Instance.new("TextLabel")\n\tlocal Disc = Instance.new("TextLabel")\n\tlocal UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")\n\tlocal Close = Instance.new("TextButton")\n\tlocal UICorner = Instance.new("UICorner")\n\n\t--Properties:\n\n\tBuyKey.Name = "BuyKey"\n\tprotectGui(BuyKey)\n\tBuyKey.ZIndexBehavior = Enum.ZIndexBehavior.Sibling\n\n\tFrame.Parent = BuyKey\n\tFrame.BackgroundColor3 = Color3.fromRGB(255, 246, 120)\n\tFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)\n\tFrame.BorderSizePixel = 10\n\tFrame.Position = UDim2.new(0.256250501, 0, 0.267831147, 0)\n\tFrame.Size = UDim2.new(0.573979616, 0, 0.464337707, 0)\n\n\tlocal text = "Banana Hub ACS is now Paid!"\n\n\tif override then\n\t\ttext = "Banana Hub "..tostring(override).." is now Paid!"\n\tend\n\t\n\tBH.Name = "BH"\n\tBH.Parent = Frame\n\tBH.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tBH.BackgroundTransparency = 1.000\n\tBH.BorderColor3 = Color3.fromRGB(0, 0, 0)\n\tBH.BorderSizePixel = 0\n\tBH.Position = UDim2.new(0, 0, 0.0891657174, 0)\n\tBH.Size = UDim2.new(1, 0, 0.284391195, 0)\n\tBH.Font = Enum.Font.SourceSans\n\tBH.Text = text\n\tBH.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tBH.TextScaled = true\n\tBH.TextSize = 49.000\n\tBH.TextWrapped = true\n\n\tPaid.Name = "Paid"\n\tPaid.Parent = Frame\n\tPaid.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tPaid.BackgroundTransparency = 1.000\n\tPaid.BorderColor3 = Color3.fromRGB(0, 0, 0)\n\tPaid.BorderSizePixel = 0\n\tPaid.Position = UDim2.new(0.0785185173, 0, 0.37044093, 0)\n\tPaid.Size = UDim2.new(0.841481507, 0, 0.144181877, 0)\n\tPaid.Font = Enum.Font.SourceSans\n\tPaid.Text = "A key is only 7$"\n\tPaid.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tPaid.TextScaled = true\n\tPaid.TextSize = 49.000\n\tPaid.TextWrapped = true\n\n\tDisc.Name = "Disc"\n\tDisc.Parent = Frame\n\tDisc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)\n\tDisc.BackgroundTransparency = 1.000\n\tDisc.BorderColor3 = Color3.fromRGB(0, 0, 0)\n\tDisc.BorderSizePixel = 0\n\tDisc.Position = UDim2.new(0.106666729, 0, 0.568717241, 0)\n\tDisc.Size = UDim2.new(0.783703685, 0, 0.285669029, 0)\n\tDisc.Font = Enum.Font.SourceSansBold\n\tDisc.Text = "get it now at: discord.gg/BananaHub"\n\tDisc.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tDisc.TextScaled = true\n\tDisc.TextSize = 49.000\n\tDisc.TextWrapped = true\n\n\tUIAspectRatioConstraint.Parent = Frame\n\tUIAspectRatioConstraint.AspectRatio = 2.116\n\n\tClose.Name = "Close"\n\tClose.Parent = Frame\n\tClose.BackgroundColor3 = Color3.fromRGB(255, 0, 0)\n\tClose.BorderColor3 = Color3.fromRGB(0, 0, 0)\n\tClose.BorderSizePixel = 0\n\tClose.Position = UDim2.new(0.952414811, 0, -0.0819226801, 0)\n\tClose.Size = UDim2.new(0.077432096, 0, 0.170399174, 0)\n\tClose.Visible = false\n\tClose.Font = Enum.Font.SourceSans\n\tClose.Text = "X"\n\tClose.TextColor3 = Color3.fromRGB(0, 0, 0)\n\tClose.TextScaled = true\n\tClose.TextSize = 14.000\n\tClose.TextWrapped = true\n\n\tUICorner.Parent = Close\n\t\n\ttask.delay(5, function()\n\t\tClose.MouseButton1Click:Connect(function()\n\t\t\tBuyKey:Destroy()\n\t\t\t\n\t\t\tts:Create(Blur, TweenInfo.new(1, Enum.EasingStyle.Cubic), {Size = 0}):Play()\n\t\t\tts:Create(game:GetService("Workspace").Camera, TweenInfo.new(.3, Enum.EasingStyle.Cubic), {FieldOfView = oldFov}):Play()\n\t\t\tBlur:Destroy()\n\t\t\t\n\t\tend)\n\t\tClose.Visible = true\n\tend)\n\t\nend\n\nreturn ui', desc:'Local script'}
     ];
 
+    // List of executors with download links
+    const EXECUTORS = [
+      {name: 'Krnl', url: 'https://krnl.ca/', desc: 'Popular Roblox executor'},
+      {name: 'Delta', url: 'https://deltaexploits.net/', desc: 'Advanced Roblox exploit'},
+      {name: 'Trident (TDT)', url: 'https://tridentexploits.com/', desc: 'High-performance executor'},
+      {name: 'Tengu (TNG)', url: 'https://tengu.gg/', desc: 'Reliable Roblox tool'}
+    ];
+
     const grid = document.getElementById('scriptsGrid');
     const modal = document.getElementById('modal');
     const codeView = document.getElementById('codeView');
@@ -327,6 +357,51 @@
     }
 
     for(const s of SCRIPTS){ grid.appendChild(makeCard(s)) }
+
+    // Executors
+    function makeExecutorCard(e){
+      const el = document.createElement('div'); el.className='card';
+      const h = document.createElement('h4'); h.textContent = e.name; el.appendChild(h);
+      const p = document.createElement('p'); p.textContent = e.desc || ''; el.appendChild(p);
+      const act = document.createElement('div'); act.className='actions';
+      const btnDL = document.createElement('button'); btnDL.className='copy'; btnDL.textContent='Download';
+      act.appendChild(btnDL);
+      el.appendChild(act);
+
+      btnDL.onclick = ()=>{ window.open(e.url, '_blank') };
+
+      return el;
+    }
+
+    const executorsGrid = document.getElementById('executorsGrid');
+    for(const e of EXECUTORS){ executorsGrid.appendChild(makeExecutorCard(e)) }
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = ()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+      };
+    });
+
+    // Custom execute
+    document.getElementById('executeCustom').onclick = async ()=>{
+      const url = document.getElementById('customUrl').value.trim();
+      if(!url) return alert('Please enter a URL');
+      currentScript = {name: 'Custom Script', url};
+      modalTitle.textContent = 'Custom Script — ' + url;
+      codeView.innerHTML = '<div class="spinner"></div>Loading...';
+      showModal(true);
+      try{
+        const resp = await fetch(url);
+        const text = resp.ok ? await resp.text() : '-- failed to fetch --';
+        codeView.textContent = text.length > 200000 ? text.slice(0,200000) + '\n\n...truncated...' : text;
+      }catch(err){
+        codeView.textContent = 'Cannot fetch file (CORS or 404).\nURL: ' + url + '\nError: ' + err.message;
+      }
+    };
 
     // modal controls
     document.getElementById('closeModal').onclick = ()=> showModal(false);
