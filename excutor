@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executor - Luong Skibidi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+            animation: bgShift 15s ease infinite;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1 {
+            color: #4ecdc4;
+            margin-bottom: 30px;
+        }
+        .executor-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .executor-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+        .executor-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .executor-card h3 {
+            color: #ff6b6b;
+        }
+        .btn {
+            background: #4ecdc4;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #45b7d1;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: #ff6b6b;
+        }
+        .executor-list {
+            display: none;
+        }
+        .executor-list.active {
+            display: grid;
+        }
+        a.back {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 30px;
+            display: inline-block;
+        }
+        a.back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Executor cho Roblox</h1>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showExecutorTab('pc')">PC</button>
+        <button class="tab-btn" onclick="showExecutorTab('android')">Android</button>
+    </div>
+    <div id="pc" class="executor-list active">
+        <div class="executor-card">
+            <h3>TDT Client</h3>
+            <p>Executor mạnh mẽ với UNC 96%, SUNC 98%.</p>
+            <a href="https://webtdt.com" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>JJ Sploit</h3>
+            <p>Executor nhẹ cho Windows 10/11.</p>
+            <a href="https://wearedevs.net/d/JJSploit" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>TNG</h3>
+            <p>Phiên bản API mới nhất.</p>
+            <a href="https://tngexploit.vercel.app/" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>Xeno</h3>
+            <p>Executor Xeno.</p>
+            <a href="https://www.xeno.onl/" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>Volcano</h3>
+            <p>Volcano executor.</p>
+            <a href="https://github.com/volcano-sh/volcano/releases" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>Solara</h3>
+            <p>Solara executor.</p>
+            <a href="https://api.getsolara.gg/" class="btn" target="_blank">Download</a>
+        </div>
+    </div>
+    <div id="android" class="executor-list">
+        <div class="executor-card">
+            <h3>Krnl</h3>
+            <p>Executor Krnl cho Android.</p>
+            <a href="https://krnl.cat" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>JJ Sploit</h3>
+            <p>JJ Sploit cho Android.</p>
+            <a href="https://wearedevs.net/d/JJSploit" class="btn" target="_blank">Download</a>
+        </div>
+        <div class="executor-card">
+            <h3>Delta</h3>
+            <p>Delta Exploits cho Android.</p>
+            <a href="https://deltaexploits.gg/" class="btn" target="_blank">Download</a>
+        </div>
+    </div>
+    <a href="home.html" class="back">Quay lại Home</a>
+
+    <script>
+        function showExecutorTab(tabName) {
+            const lists = document.querySelectorAll('.executor-list');
+            const buttons = document.querySelectorAll('.tab-btn');
+            lists.forEach(list => list.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
