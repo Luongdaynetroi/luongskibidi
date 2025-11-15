@@ -1,1090 +1,257 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub-like Code Hosting</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
-            background-attachment: fixed;
-            color: #c9d1d9;
-            height: 100vh;
-            overflow: hidden;
-            animation: backgroundShift 20s ease-in-out infinite;
-        }
-        @keyframes backgroundShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .header {
-            background-color: #161b22;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #30363d;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(45deg, #58a6ff, #ff6b9d);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes glow {
-            from { filter: brightness(1); }
-            to { filter: brightness(1.2); }
-        }
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 20px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 8px 12px;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-        }
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 8px 16px;
-            background-color: #238636;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #2ea043;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4);
-            transition: all 0.2s ease;
-        }
-        .btn:active {
-            transform: translateY(0);
-        }
-        .container {
-            display: flex;
-            height: calc(100vh - 60px);
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #161b22;
-            border-right: 1px solid #30363d;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .sidebar h3 {
-            margin-bottom: 15px;
-            color: #f0f6fc;
-        }
-        .repo-list {
-            list-style: none;
-        }
-        .repo-item {
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-bottom: 5px;
-        }
-        .repo-item:hover {
-            background-color: #21262d;
-            transform: translateX(5px);
-            transition: all 0.2s ease;
-        }
-        .repo-item.active {
-            background-color: #30363d;
-            border-left: 3px solid #58a6ff;
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .file-header {
-            padding: 10px 20px;
-            background-color: #161b22;
-            border-bottom: 1px solid #30363d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .branch-selector {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .branch-selector select {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            padding: 4px 8px;
-            font-size: 12px;
-        }
-        .file-path {
-            font-size: 14px;
-            color: #c9d1d9;
-        }
-        .file-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .repo-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            color: #8b949e;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #30363d;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            color: #8b949e;
-            border-bottom: 2px solid transparent;
-        }
-        .tab.active {
-            color: #f0f6fc;
-            border-bottom-color: #fd7e14;
-        }
-        .tab-content {
-            display: none;
-            padding: 20px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .commit-list {
-            list-style: none;
-        }
-        .commit-item {
-            padding: 15px;
-            border-bottom: 1px solid #30363d;
-            display: flex;
-            gap: 15px;
-        }
-        .commit-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: #30363d;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #c9d1d9;
-            font-weight: bold;
-        }
-        .commit-info {
-            flex: 1;
-        }
-        .commit-message {
-            color: #f0f6fc;
-            margin-bottom: 5px;
-        }
-        .commit-meta {
-            font-size: 12px;
-            color: #8b949e;
-        }
-        .search-files {
-            margin-bottom: 15px;
-        }
-        .search-files input {
-            width: 100%;
-            padding: 8px;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-        }
-        .btn-secondary {
-            padding: 6px 12px;
-            background-color: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .btn-secondary:hover {
-            background-color: #30363d;
-        }
-        .content-area {
-            flex: 1;
-            display: flex;
-        }
-        .file-tree {
-            width: 250px;
-            background-color: #0d1117;
-            border-right: 1px solid #30363d;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .file-tree h4 {
-            margin-bottom: 10px;
-            color: #f0f6fc;
-        }
-        .file-list {
-            list-style: none;
-        }
-        .file-item {
-            padding: 5px 0;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .file-item:hover {
-            color: #58a6ff;
-        }
-        .editor-container {
-            flex: 1;
-            position: relative;
-        }
-        #editor {
-            width: 100%;
-            height: 100%;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.show {
-            display: flex;
-            animation: modalFadeIn 0.3s ease-out;
-        }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .modal-content {
-            background-color: #161b22;
-            padding: 20px;
-            border-radius: 6px;
-            width: 400px;
-            max-width: 90%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-        .modal h3 {
-            margin-bottom: 15px;
-            color: #f0f6fc;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #c9d1d9;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .raw-view {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0d1117;
-            z-index: 1001;
-            padding: 20px;
-            overflow: auto;
-        }
-        .raw-view.show {
-            display: block;
-        }
-        .raw-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .raw-content {
-            background-color: #161b22;
-            padding: 20px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            color: #c9d1d9;
-        }
-
-        @media(max-width:768px){
-            .container{padding:10px}
-            .header{flex-direction:column;gap:10px;text-align:center}
-            .search-bar{max-width:none;margin:0}
-            .header-actions{justify-content:center}
-            .container{flex-direction:column}
-            .sidebar{width:100%;padding:10px}
-            .main-content{width:100%}
-            .file-header{flex-direction:column;gap:10px;text-align:center}
-            .file-info{flex-direction:column;gap:10px}
-            .file-actions{justify-content:center}
-            .tabs{flex-direction:column}
-            .tab{text-align:center}
-            .content-area{flex-direction:column}
-            .file-tree{width:100%;padding:10px}
-            .editor-container{height:400px}
-            .modal-content{width:95%;max-width:none}
-            .raw-view{padding:10px}
-        }
-    </style>
+    <title>Exploits TDT - Roblox Executor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/styles.css">
 </head>
+
 <body>
-    <div class="header">
-        <div class="logo">CodeHub</div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search repositories...">
-        </div>
-        <div class="header-actions">
-            <button class="btn" id="loginBtn">Sign In</button>
-            <button class="btn" id="newRepoBtn">New Repository</button>
+    <!-- Welcome Splash Screen -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-content">
+            <div class="welcome-logo">
+                <div class="logo-glow"><i class="fas fa-bolt"></i></div>
+                <h1 class="welcome-title">EXPLOITS TDT</h1>
+                <div class="welcome-subtitle">No Key • Free • Powerful</div>
+            </div>
+            <div class="welcome-loading">
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <div class="loading-text">Loading...</div>
+            </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="sidebar">
-            <h3>Your Repositories</h3>
-            <ul class="repo-list" id="repoList">
-                <li class="repo-item active" data-repo="sample-repo">sample-repo</li>
-            </ul>
-            <div class="repo-stats">
-                <div class="stat-item">
-                    <span>⭐</span> 42
-                </div>
-                <div class="stat-item">
-                    <span>🍴</span> 12
-                </div>
+    <div class="background-animation"></div>
+
+    <header class="header" id="mainHeader">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <h1>Explotis TDT</h1>
             </div>
-            <button class="btn" id="starBtn" style="width: 100%; margin-top: 15px;">Star</button>
-            <button class="btn-secondary" id="forkBtn" style="width: 100%; margin-top: 5px;">Fork</button>
+            <nav class="nav">
+                <a href="#home">Home</a>
+                <a href="downloads.php">Downloads</a>
+                <a href="#features">Features</a>
+                <a href="#contact">Support</a>
+                <a href="scripts.php">Scripts</a>
+            </nav>
         </div>
+    </header>
 
-        <div class="main-content">
-            <div class="file-header">
-                <div class="file-info">
-                    <div class="branch-selector">
-                        <span>main</span>
-                        <select id="branchSelect">
-                            <option value="main">main</option>
-                            <option value="develop">develop</option>
-                        </select>
-                        <button class="btn-secondary" id="newBranchBtn">New branch</button>
-                    </div>
-                    <div class="file-path" id="filePath">sample-repo / README.md</div>
-                </div>
-                <div class="file-actions">
-                    <button class="btn-secondary" id="newFileBtn">New File</button>
-                    <button class="btn-secondary" id="rawBtn">Raw</button>
-                    <button class="btn-secondary" id="editBtn">Edit</button>
-                    <button class="btn" id="commitBtn">Commit</button>
-                </div>
-            </div>
-
-            <div class="tabs">
-                <div class="tab active" data-tab="files">Files</div>
-                <div class="tab" data-tab="commits">Commits</div>
-                <div class="tab" data-tab="branches">Branches</div>
-                <div class="tab" data-tab="collaborators">Collaborators</div>
-            </div>
-
-            <div class="content-area">
-                <div class="tab-content active" id="files-tab">
-                    <div class="file-tree">
-                        <div class="search-files">
-                            <input type="text" id="fileSearch" placeholder="Search files...">
-                        </div>
-                        <h4>Files</h4>
-                        <ul class="file-list" id="fileList">
-                            <li class="file-item" data-file="README.md">README.md</li>
-                            <li class="file-item" data-file="index.html">index.html</li>
-                            <li class="file-item" data-file="script.js">script.js</li>
-                        </ul>
-                    </div>
-
-                    <div class="editor-container">
-                        <div id="editor"></div>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="commits-tab">
-                    <h4>Commit History</h4>
-                    <ul class="commit-list" id="commitList">
-                        <li class="commit-item">
-                            <div class="commit-avatar">JD</div>
-                            <div class="commit-info">
-                                <div class="commit-message">Initial commit</div>
-                                <div class="commit-meta">John Doe committed 2 hours ago</div>
+    <main id="mainContent">
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h2>Executor TDT</h2>
+                        <p class="subtitle">Discord.gg/tdtfreenokey</p>
+                        <p class="description">Exploits Client TDT No Key - Owner Form VietNam</p>
+                        <div class="hero-stats">
+                            <div class="stat">
+                                <div class="stat-number">+9999%</div>
+                                <div class="stat-label">Downloads</div>
                             </div>
-                        </li>
-                        <li class="commit-item">
-                            <div class="commit-avatar">JS</div>
-                            <div class="commit-info">
-                                <div class="commit-message">Add README and basic structure</div>
-                                <div class="commit-meta">Jane Smith committed 1 day ago</div>
+                            <div class="stat">
+                                <div class="stat-number">+99%</div>
+                                <div class="stat-label">Uptime</div>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="tab-content" id="branches-tab">
-                    <h4>Branches</h4>
-                    <ul class="file-list" id="branchList">
-                        <li class="file-item active">main</li>
-                        <li class="file-item">develop</li>
-                    </ul>
-                </div>
-
-                <div class="tab-content" id="collaborators-tab">
-                    <h4>Collaborators</h4>
-                    <div style="margin-bottom: 15px;">
-                        <button class="btn" id="addCollaboratorBtn">Add Collaborator</button>
-                    </div>
-                    <ul class="file-list" id="collaboratorList">
-                        <li class="file-item">johndoe (Owner)</li>
-                        <li class="file-item">janesmith (Write)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <h3>Sign In</h3>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelLogin">Cancel</button>
-                <button class="btn" id="submitLogin">Sign In</button>
-                <button class="btn-secondary" id="switchToRegister">Register</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <h3>Sign Up</h3>
-            <div class="form-group">
-                <label for="regUsername">Username</label>
-                <input type="text" id="regUsername">
-            </div>
-            <div class="form-group">
-                <label for="regEmail">Email</label>
-                <input type="email" id="regEmail">
-            </div>
-            <div class="form-group">
-                <label for="regPassword">Password</label>
-                <input type="password" id="regPassword">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelRegister">Cancel</button>
-                <button class="btn" id="submitRegister">Sign Up</button>
-                <button class="btn-secondary" id="switchToLogin">Sign In</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Repo Modal -->
-    <div class="modal" id="newRepoModal">
-        <div class="modal-content">
-            <h3>Create New Repository</h3>
-            <div class="form-group">
-                <label for="repoName">Repository Name</label>
-                <input type="text" id="repoName">
-            </div>
-            <div class="form-group">
-                <label for="repoDesc">Description</label>
-                <input type="text" id="repoDesc">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelNewRepo">Cancel</button>
-                <button class="btn" id="submitNewRepo">Create</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Branch Modal -->
-    <div class="modal" id="newBranchModal">
-        <div class="modal-content">
-            <h3>Create New Branch</h3>
-            <div class="form-group">
-                <label for="branchName">Branch Name</label>
-                <input type="text" id="branchName" placeholder="e.g., feature/new-feature">
-            </div>
-            <div class="form-group">
-                <label for="baseBranch">Base Branch</label>
-                <select id="baseBranch">
-                    <option value="main">main</option>
-                    <option value="develop">develop</option>
-                </select>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelNewBranch">Cancel</button>
-                <button class="btn" id="submitNewBranch">Create Branch</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Collaborator Modal -->
-    <div class="modal" id="addCollaboratorModal">
-        <div class="modal-content">
-            <h3>Add Collaborator</h3>
-            <div class="form-group">
-                <label for="collaboratorUsername">Username</label>
-                <input type="text" id="collaboratorUsername" placeholder="Enter username">
-            </div>
-            <div class="form-group">
-                <label for="collaboratorRole">Role</label>
-                <select id="collaboratorRole">
-                    <option value="read">Read</option>
-                    <option value="write">Write</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelAddCollaborator">Cancel</button>
-                <button class="btn" id="submitAddCollaborator">Add Collaborator</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- New File Modal -->
-    <div class="modal" id="newFileModal">
-        <div class="modal-content">
-            <h3>Create New File</h3>
-            <div class="form-group">
-                <label for="fileName">File Name</label>
-                <input type="text" id="fileName" placeholder="e.g., script.js, index.html">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelNewFile">Cancel</button>
-                <button class="btn" id="submitNewFile">Create File</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Raw View -->
-    <div class="raw-view" id="rawView">
-        <div class="raw-header">
-            <h3 id="rawTitle">Raw File Content</h3>
-            <button class="btn-secondary" id="closeRaw">Close</button>
-        </div>
-        <div class="raw-content" id="rawContent"></div>
-    </div>
-
-    <script>
-        let editor;
-        let currentFile = 'README.md';
-        let currentRepo = 'sample-repo';
-        let currentBranch = 'main';
-        let isEditing = false;
-        let isStarred = false;
-        let starCount = 42;
-        let currentUser = null;
-        let userData = {};
-
-        // Load user data from localStorage
-        function loadUserData() {
-            const data = localStorage.getItem('codehub_userdata');
-            if (data) {
-                userData = JSON.parse(data);
-            } else {
-                // Initialize with sample data
-                userData = {
-                    'demo': {
-                        password: 'demo',
-                        repos: {
-                            'sample-repo': {
-                                description: 'A sample repository',
-                                isPrivate: false,
-                                files: {
-                                    'README.md': `# Sample Repository
-
-This is a sample repository for demonstration purposes.
-
-## Features
-
-- File editing
-- Raw view
-- Commit functionality
-
-## Getting Started
-
-Clone this repo and start coding!`,
-                                    'index.html': `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample App</title>
-</head>
-<body>
-    <h1>Hello World!</h1>
-    <p>This is a sample HTML file.</p>
-</body>
-</html>`,
-                                    'script.js': `// Sample JavaScript file
-console.log('Hello from sample repo!');
-
-function greet(name) {
-    return \`Hello, \${name}!\`;
-}
-
-console.log(greet('World'));`
-                                },
-                                commits: [
-                                    {message: 'Initial commit', author: 'demo', timestamp: Date.now()},
-                                    {message: 'Add README and basic structure', author: 'demo', timestamp: Date.now() - 86400000}
-                                ],
-                                branches: ['main', 'develop']
-                            }
-                        }
-                    }
-                };
-                saveUserData();
-            }
-        }
-
-        function saveUserData() {
-            localStorage.setItem('codehub_userdata', JSON.stringify(userData));
-        }
-
-        function loadCurrentRepo() {
-            if (currentUser && userData[currentUser] && userData[currentUser].repos[currentRepo]) {
-                const repo = userData[currentUser].repos[currentRepo];
-                fileContents = repo.files;
-                // Update UI
-                renderFileList();
-                renderCommits();
-                renderBranches();
-            }
-        }
-
-        function renderFileList() {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            Object.keys(fileContents).forEach(filename => {
-                const li = document.createElement('li');
-                li.className = 'file-item';
-                li.dataset.file = filename;
-                li.textContent = filename;
-                fileList.appendChild(li);
-            });
-        }
-
-        function renderCommits() {
-            const commitList = document.getElementById('commitList');
-            commitList.innerHTML = '';
-            if (currentUser && userData[currentUser].repos[currentRepo]) {
-                const commits = userData[currentUser].repos[currentRepo].commits;
-                commits.forEach(commit => {
-                    const li = document.createElement('li');
-                    li.className = 'commit-item';
-                    li.innerHTML = `
-                        <div class="commit-avatar">${commit.author.slice(0,2).toUpperCase()}</div>
-                        <div class="commit-info">
-                            <div class="commit-message">${commit.message}</div>
-                            <div class="commit-meta">${commit.author} committed ${new Date(commit.timestamp).toLocaleString()}</div>
+                            <div class="stat">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Support</div>
+                            </div>
                         </div>
-                    `;
-                    commitList.appendChild(li);
-                });
-            }
-        }
+                    </div>
+                    <div class="hero-visual">
+                        <div class="executor-box">
+                            <div class="code-window">
+                                <div class="code-header">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                    <span class="code-title">tdt.lua</span>
+                                </div>
+                                <div class="code-content">
+                                    <div class="code-line"><span class="keyword">Exploits TDT</span> <span class="function"></span>()</div>
+                                    <div class="code-line"> <span class="comment">-- Advanced execution TDT</span></div>
+                                    <div class="code-line"> <span class="keyword">print</span>(<span class="string">"TDT No Key On Top!"</span>)</div>
+                                    <div class="code-line"><span class="keyword">end</span></div>
+                                    <div class="cursor">|</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        function renderBranches() {
-            const branchSelect = document.getElementById('branchSelect');
-            const branchList = document.getElementById('branchList');
-            branchSelect.innerHTML = '';
-            branchList.innerHTML = '';
-            if (currentUser && userData[currentUser].repos[currentRepo]) {
-                const branches = userData[currentUser].repos[currentRepo].branches;
-                branches.forEach(branch => {
-                    // Branch select
-                    const option = document.createElement('option');
-                    option.value = branch;
-                    option.textContent = branch;
-                    branchSelect.appendChild(option);
+        <!-- Shop Game Banner - Nổi bật nhất -->
+        <section id="shop-game" class="shop-game-banner">
+            <div class="container">
+                <div class="shop-game-content">
+                    <div class="shop-game-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <h2 class="shop-game-title">
+                        <span class="shop-title-text">SHOP GAME</span>
+                    </h2>
+                    <p class="shop-game-description">Mua bán Account Roblox - Free Fire uy tín, giá tốt nhất thị trường!</p>
+                    <div class="shop-game-features">
+                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Trusted Account</span>
+                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Best Price</span>
+                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Support 24/7</span>
+                    </div>
+                    <a href="https://thinhrobloxviet.com/" target="_blank" class="shop-game-btn">
+                        <span class="shop-btn-text">Visit Shop Now</span>
+                        <i class="fas fa-arrow-right shop-btn-arrow"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-                    // Branch list
-                    const li = document.createElement('li');
-                    li.className = 'file-item' + (branch === currentBranch ? ' active' : '');
-                    li.textContent = branch;
-                    branchList.appendChild(li);
-                });
-            }
-        }
+        <section id="download" class="download-section">
+            <div class="container">
+                <h2 class="section-title">Download Executor</h2>
+                <div class="download-grid">
+                                                                                                    <div class="download-card featured">
+                                                                    <div class="featured-badge">
+                                        <i class="fas fa-fire"></i> VipPro TDT                                    </div>
+                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Exploits-TDT-Api1.exe</h3>
+                                <div class="version-info">
+                                    <span class="version">TDT</span>
+                                    <span class="size">571 MB</span>
+                                </div>
+                                <p class="card-description">Unc 96%, Sunc 98%, Run Windows 10/11</p>
+                                <div class="download-count">Loaded: 110</div>
+                                                                    <a href="download.php?type=Free No Key" class="btn-download premium">
+                                        <span class="btn-text">Download</span>
+                                        <i class="fas fa-arrow-down btn-icon"></i>
+                                    </a>
+                                                            </div>
+                                                                                <div class="download-card ">
+                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Update Api</h3>
+                                <div class="version-info">
+                                    <span class="version">TDT</span>
+                                    <span class="size"></span>
+                                </div>
+                                <p class="card-description">Unc 92%, Sunc 91%, Run Windows 10/11</p>
+                                <div class="download-count">Loaded: 9</div>
+                                                                    <div class="btn-download" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+                                        <span class="btn-text">Chưa có link</span>
+                                        <i class="fas fa-exclamation-triangle btn-icon"></i>
+                                    </div>
+                                                            </div>
+                                                                                <div class="download-card ">
+                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Roblox-Exploits-TDT.exe</h3>
+                                <div class="version-info">
+                                    <span class="version">TDT</span>
+                                    <span class="size">180 MB</span>
+                                </div>
+                                <p class="card-description">Roblox Beta</p>
+                                <div class="download-count">Loaded: 107</div>
+                                                                    <a href="download.php?type=Pc" class="btn-download ">
+                                        <span class="btn-text">Download</span>
+                                        <i class="fas fa-arrow-down btn-icon"></i>
+                                    </a>
+                                                            </div>
+<previous line repeated 1 additional times>
+            </div>
+        </section>
 
-        function renderRepoList() {
-            const repoList = document.getElementById('repoList');
-            repoList.innerHTML = '';
-            if (currentUser && userData[currentUser].repos) {
-                Object.keys(userData[currentUser].repos).forEach(repoName => {
-                    const li = document.createElement('li');
-                    li.className = 'repo-item' + (repoName === currentRepo ? ' active' : '');
-                    li.dataset.repo = repoName;
-                    li.textContent = repoName;
-                    repoList.appendChild(li);
-                });
-            }
-        }
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2 class="section-title">Features</h2>
+                <div class="features-grid">
+                                            <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-bolt"></i></div>                            <h3>Lightning Fast</h3>
+                            <p>Ultra-fast script execution with optimized performance</p>
+                        </div>
+                                            <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>                            <h3>Secure</h3>
+                            <p>Advanced anti-ban protection and safety features</p>
+                        </div>
+                                            <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-bullseye"></i></div>                            <h3>Accurate</h3>
+                            <p>Precise execution with zero errors guaranteed</p>
+                        </div>
+                                            <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-comments"></i></div>                            <h3>Community</h3>
+                            <p>Join our active community for support</p>
+                        </div>
+                                    </div>
+            </div>
+        </section>
 
-        let fileContents = {};
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Support</h2>
+                <div class="contact-info">
+                                            <div class="info-card">
+                            <div class="info-icon"><i class="fas fa-comments"></i></div>                            <h3>Discord</h3>
+                            <p>Check out our Discord server</p>
+                                                            <a href="https://discord.gg/tdtfreenokey" target="_blank" class="contact-link">
+                                    discord.gg                                </a>
+                                                    </div>
+                                            <div class="info-card">
+                            <div class="info-icon"><i class="fas fa-comments"></i></div>                            <h3>Zalo</h3>
+                            <p>Check out our Group Zalo</p>
+                                                            <a href="https://zalo.me/g/qihvbb859" target="_blank" class="contact-link">
+                                    zalo.me                                </a>
+                                                    </div>
+                                            <div class="info-card">
+                            <div class="info-icon"><i class="fas fa-globe"></i></div>                            <h3>Shop Game</h3>
+                            <p>Sell Account Roblox - Free Fire</p>
+                                                            <a href="https://thinhrobloxviet.com/" target="_blank" class="contact-link">
+                                    thinhrobloxviet.com                                </a>
+                                                    </div>
+                                    </div>
+            </div>
+        </section>
 
-        // Initialize app
-        loadUserData();
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser && userData[savedUser]) {
-            currentUser = savedUser;
-            loadCurrentRepo();
-            renderRepoList();
-        }
+    </main>
 
-        // Initialize Monaco Editor
-        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
-        require(['vs/editor/editor.main'], function() {
-            editor = monaco.editor.create(document.getElementById('editor'), {
-                value: fileContents[currentFile],
-                language: getLanguage(currentFile),
-                theme: 'vs-dark',
-                automaticLayout: true,
-                readOnly: true
-            });
-        });
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Explotis TDT. All rights reserved.</p>
+        </div>
+    </footer>
 
-        function getLanguage(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            const langMap = {
-                'js': 'javascript',
-                'html': 'html',
-                'md': 'markdown',
-                'css': 'css',
-                'json': 'json'
-            };
-            return langMap[ext] || 'plaintext';
-        }
+    <div id="notification" class="notification"></div>
 
-        // Event listeners
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            document.getElementById('loginModal').classList.add('show');
-        });
+    <!-- Music Player -->
+    <div class="music-player">
+        <div class="music-controls">
+            <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">
+                <i class="fas fa-volume-up" id="musicIcon"></i>
+            </button>
+            <div class="music-info">
+                <div class="music-title"><i class="fas fa-music"></i> Background Music</div>
+                <input type="range" id="volumeControl" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+            </div>
+        </div>
+        <audio id="backgroundMusic" loop>
+            <!-- 🎵 Nhạc Chill - Link trực tiếp -->
+            <!-- Có thể thay bằng link nhạc khác nếu muốn -->
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
 
-        document.getElementById('cancelLogin').addEventListener('click', () => {
-            document.getElementById('loginModal').classList.remove('show');
-        });
+            <!-- Backup: Các link nhạc chill khác -->
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 
-        document.getElementById('submitLogin').addEventListener('click', () => {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            if (userData[username] && userData[username].password === password) {
-                currentUser = username;
-                localStorage.setItem('currentUser', username);
-                showLoginModal(false);
-                loadCurrentRepo();
-                renderRepoList();
-                alert(`Welcome back, ${username}!`);
-            } else {
-                alert('Invalid username or password');
-            }
-        });
+            <!-- File local (nếu có file trong thư mục music/) -->
+            <source src="music/background.mp3" type="audio/mpeg">
+            <source src="music/background.ogg" type="audio/ogg">
 
-        document.getElementById('newRepoBtn').addEventListener('click', () => {
-            document.getElementById('newRepoModal').classList.add('show');
-        });
+            Your browser does not support the audio element.
+        </audio>
+    </div>
 
-        document.getElementById('cancelNewRepo').addEventListener('click', () => {
-            document.getElementById('newRepoModal').classList.remove('show');
-        });
-
-        document.getElementById('submitNewRepo').addEventListener('click', () => {
-            const repoName = document.getElementById('repoName').value;
-            const repoDesc = document.getElementById('repoDesc').value;
-            if (repoName && currentUser) {
-                if (!userData[currentUser].repos) userData[currentUser].repos = {};
-                userData[currentUser].repos[repoName] = {
-                    description: repoDesc || '',
-                    isPrivate: false,
-                    files: {
-                        'README.md': `# ${repoName}\n\n${repoDesc || 'A new repository'}\n\n## Getting Started\n\nStart coding!`
-                    },
-                    commits: [{message: 'Initial commit', author: currentUser, timestamp: Date.now()}],
-                    branches: ['main']
-                };
-                saveUserData();
-                renderRepoList();
-                alert(`Repository "${repoName}" created!`);
-                document.getElementById('newRepoModal').classList.remove('show');
-            } else {
-                alert('Please sign in first');
-            }
-        });
-
-        // Register functionality
-        document.getElementById('switchToRegister').addEventListener('click', () => {
-            document.getElementById('loginModal').classList.remove('show');
-            document.getElementById('registerModal').classList.add('show');
-        });
-
-        document.getElementById('switchToLogin').addEventListener('click', () => {
-            document.getElementById('registerModal').classList.remove('show');
-            document.getElementById('loginModal').classList.add('show');
-        });
-
-        document.getElementById('cancelRegister').addEventListener('click', () => {
-            document.getElementById('registerModal').classList.remove('show');
-        });
-
-        document.getElementById('submitRegister').addEventListener('click', () => {
-            const username = document.getElementById('regUsername').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            if (username && password) {
-                if (userData[username]) {
-                    alert('Username already exists');
-                    return;
-                }
-                userData[username] = {
-                    password: password,
-                    email: email,
-                    repos: {}
-                };
-                saveUserData();
-                alert('Account created successfully! Please sign in.');
-                document.getElementById('registerModal').classList.remove('show');
-                document.getElementById('loginModal').classList.add('show');
-            } else {
-                alert('Please fill in all fields');
-            }
-        });
-
-        document.getElementById('fileList').addEventListener('click', (e) => {
-            if (e.target.classList.contains('file-item')) {
-                currentFile = e.target.dataset.file;
-                document.getElementById('filePath').textContent = `${currentRepo} / ${currentFile}`;
-                if (editor) {
-                    editor.setValue(fileContents[currentFile] || '');
-                    editor.updateOptions({ language: getLanguage(currentFile), readOnly: !isEditing });
-                }
-            }
-        });
-
-        document.getElementById('editBtn').addEventListener('click', () => {
-            isEditing = !isEditing;
-            if (editor) {
-                editor.updateOptions({ readOnly: !isEditing });
-            }
-            document.getElementById('editBtn').textContent = isEditing ? 'View' : 'Edit';
-        });
-
-        document.getElementById('rawBtn').addEventListener('click', () => {
-            document.getElementById('rawTitle').textContent = `Raw: ${currentFile}`;
-            document.getElementById('rawContent').textContent = fileContents[currentFile] || '';
-            document.getElementById('rawView').classList.add('show');
-        });
-
-        document.getElementById('closeRaw').addEventListener('click', () => {
-            document.getElementById('rawView').classList.remove('show');
-        });
-
-        document.getElementById('commitBtn').addEventListener('click', () => {
-            if (isEditing && editor && currentUser && userData[currentUser].repos[currentRepo]) {
-                fileContents[currentFile] = editor.getValue();
-                userData[currentUser].repos[currentRepo].files = fileContents;
-                // Add to commit history
-                const newCommit = {
-                    message: `Update ${currentFile}`,
-                    author: currentUser,
-                    timestamp: Date.now()
-                };
-                userData[currentUser].repos[currentRepo].commits.unshift(newCommit);
-                saveUserData();
-                renderCommits();
-                alert('Changes committed successfully!');
-                isEditing = false;
-                editor.updateOptions({ readOnly: true });
-                document.getElementById('editBtn').textContent = 'Edit';
-            } else {
-                alert('Please edit the file first!');
-            }
-        });
-
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
-            });
-        });
-
-        // Branch management
-        document.getElementById('newBranchBtn').addEventListener('click', () => {
-            document.getElementById('newBranchModal').classList.add('show');
-        });
-
-        document.getElementById('cancelNewBranch').addEventListener('click', () => {
-            document.getElementById('newBranchModal').classList.remove('show');
-        });
-
-        document.getElementById('submitNewBranch').addEventListener('click', () => {
-            const branchName = document.getElementById('branchName').value;
-            if (branchName && currentUser && userData[currentUser].repos[currentRepo]) {
-                if (userData[currentUser].repos[currentRepo].branches.includes(branchName)) {
-                    alert('Branch already exists');
-                    return;
-                }
-                userData[currentUser].repos[currentRepo].branches.push(branchName);
-                saveUserData();
-                renderBranches();
-                alert(`Branch "${branchName}" created!`);
-                document.getElementById('newBranchModal').classList.remove('show');
-            } else {
-                alert('Please select a repository first');
-            }
-        });
-
-        // File search with debounce
-        let searchTimeout;
-        document.getElementById('fileSearch').addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const query = e.target.value.toLowerCase();
-                const items = document.querySelectorAll('#fileList .file-item');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(query) ? 'block' : 'none';
-                });
-            }, 300);
-        });
-
-        // Star/Fork functionality
-        document.getElementById('starBtn').addEventListener('click', () => {
-            isStarred = !isStarred;
-            starCount += isStarred ? 1 : -1;
-            document.querySelector('.stat-item:first-child').innerHTML = `<span>⭐</span> ${starCount}`;
-            document.getElementById('starBtn').textContent = isStarred ? 'Unstar' : 'Star';
-            document.getElementById('starBtn').className = isStarred ? 'btn-secondary' : 'btn';
-        });
-
-        document.getElementById('forkBtn').addEventListener('click', () => {
-            alert('Repository forked successfully!');
-        });
-
-        // Add collaborator
-        document.getElementById('addCollaboratorBtn').addEventListener('click', () => {
-            document.getElementById('addCollaboratorModal').classList.add('show');
-        });
-
-        document.getElementById('cancelAddCollaborator').addEventListener('click', () => {
-            document.getElementById('addCollaboratorModal').classList.remove('show');
-        });
-
-        document.getElementById('submitAddCollaborator').addEventListener('click', () => {
-            const username = document.getElementById('collaboratorUsername').value;
-            const role = document.getElementById('collaboratorRole').value;
-            if (username) {
-                const collaboratorList = document.getElementById('collaboratorList');
-                const li = document.createElement('li');
-                li.className = 'file-item';
-                li.textContent = `${username} (${role.charAt(0).toUpperCase() + role.slice(1)})`;
-                collaboratorList.appendChild(li);
-                alert(`Collaborator "${username}" added with ${role} permissions!`);
-                document.getElementById('addCollaboratorModal').classList.remove('show');
-            }
-        });
-
-        // New file functionality
-        document.getElementById('newFileBtn').addEventListener('click', () => {
-            document.getElementById('newFileModal').classList.add('show');
-        });
-
-        document.getElementById('cancelNewFile').addEventListener('click', () => {
-            document.getElementById('newFileModal').classList.remove('show');
-        });
-
-        document.getElementById('submitNewFile').addEventListener('click', () => {
-            const fileName = document.getElementById('fileName').value;
-            if (fileName && currentUser && userData[currentUser].repos[currentRepo]) {
-                if (fileContents[fileName]) {
-                    alert('File already exists');
-                    return;
-                }
-                // Create empty file
-                fileContents[fileName] = '';
-                userData[currentUser].repos[currentRepo].files = fileContents;
-                saveUserData();
-                renderFileList();
-                // Switch to new file
-                currentFile = fileName;
-                document.getElementById('filePath').textContent = `${currentRepo} / ${currentFile}`;
-                if (editor) {
-                    editor.setValue('');
-                    editor.updateOptions({ language: getLanguage(currentFile), readOnly: false });
-                }
-                isEditing = true;
-                document.getElementById('editBtn').textContent = 'View';
-                alert(`File "${fileName}" created!`);
-                document.getElementById('newFileModal').classList.remove('show');
-            } else {
-                alert('Please select a repository first');
-            }
-        });
-    </script>
+    
+    <script src="/assets/script.js"></script>
 </body>
+
 </html>
