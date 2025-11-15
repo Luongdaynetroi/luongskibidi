@@ -104,7 +104,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 1rem;
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: glow 2s ease-in-out infinite alternate, fadeInUp 1s ease-out;
         }
 
         @keyframes glow {
@@ -112,10 +112,22 @@
             to { text-shadow: 0 0 30px rgba(255, 107, 107, 0.8); }
         }
 
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .hero p {
             font-size: 1.5rem;
             margin-bottom: 2rem;
             opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s both;
         }
 
         .btn {
@@ -128,11 +140,23 @@
             font-weight: 700;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            animation: fadeInUp 1s ease-out 1s both;
         }
 
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .features {
@@ -184,6 +208,92 @@
             margin-bottom: 1rem;
         }
 
+        .scripts {
+            padding: 5rem 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .scripts h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ff6b6b;
+        }
+
+        .roblox-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 1rem 2rem;
+            margin: 0 0.5rem;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #ff6b6b;
+        }
+
+        .tab-content {
+            display: none;
+            text-align: center;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact {
+            padding: 5rem 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .contact h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #96ceb4;
+        }
+
+        .contact-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-info p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: #fff;
+            font-size: 2rem;
+            transition: color 0.3s;
+        }
+
+        .social-link:hover {
+            color: #4ecdc4;
+        }
+
         footer {
             background: rgba(0, 0, 0, 0.8);
             padding: 2rem 0;
@@ -217,7 +327,9 @@
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="luongskibidi.html">Main Page</a></li>
+                <li><a href="#scripts">Scripts</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="luongskibidi">Main Page</a></li>
             </ul>
         </div>
     </nav>
@@ -230,7 +342,7 @@
         </div>
     </section>
 
-    <section id="features" class="features">
+    <section id="features" class="features fade-in">
         <div class="container">
             <h2>Tính năng nổi bật</h2>
             <div class="features-grid">
@@ -253,6 +365,41 @@
         </div>
     </section>
 
+    <section id="scripts" class="scripts fade-in">
+        <div class="container">
+            <h2>Roblox</h2>
+            <div class="roblox-tabs">
+                <button class="tab-btn active" onclick="showTab('executor')">Executor</button>
+                <button class="tab-btn" onclick="showTab('script')">Script</button>
+            </div>
+            <div id="executor" class="tab-content active">
+                <p>Tải Executor để chạy script trong Roblox.</p>
+                <a href="executor.html" class="btn">Đến trang Executor</a>
+            </div>
+            <div id="script" class="tab-content">
+                <p>Tải các script hữu ích cho Roblox.</p>
+                <a href="script.html" class="btn">Đến trang Script</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact fade-in">
+        <div class="container">
+            <h2>Liên hệ</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> Email: gmmaximtv@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> Phone: +84 123 456 789</p>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/luongdaynetroi" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://facebook.com/luongdaynetroi" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://discord.com/invite/agXSpD64" target="_blank" class="social-link"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <div class="container">
             <p>&copy; 2025 Luong Skibidi. All rights reserved.</p>
@@ -269,6 +416,26 @@
                 });
             });
         });
+
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+            contents.forEach(content => content.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
