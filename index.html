@@ -1,257 +1,373 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exploits TDT - Roblox Executor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/styles.css">
+    <title>Luong Skibidi - Trang Cá Nhân</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            overflow: hidden;
+        }
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .container {
+            z-index: 1;
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 4em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5), 0 0 40px rgba(78, 205, 196, 0.5);
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 107, 0.5), 0 0 40px rgba(78, 205, 196, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 107, 0.8), 0 0 60px rgba(78, 205, 196, 0.8); }
+        }
+        p {
+            font-size: 1.3em;
+            margin: 20px 0;
+            line-height: 1.8;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .skibidi {
+            font-size: 3em;
+            font-weight: 300;
+            margin: 30px 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #fff;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        button:hover::before {
+            left: 100%;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+        .content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .content h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .content ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .content li {
+            font-size: 1.2em;
+            margin: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+        footer {
+            margin-top: 60px;
+            font-size: 1em;
+            opacity: 0.7;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: rgba(26, 26, 46, 0.95);
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #fff;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-content h2 {
+            margin-top: 0;
+            color: #4ecdc4;
+        }
+        .tab-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        .tab-content li {
+            padding: 5px 0;
+        }
+    </style>
 </head>
-
 <body>
-    <!-- Welcome Splash Screen -->
-    <div id="welcomeScreen" class="welcome-screen">
-        <div class="welcome-content">
-            <div class="welcome-logo">
-                <div class="logo-glow"><i class="fas fa-bolt"></i></div>
-                <h1 class="welcome-title">EXPLOITS TDT</h1>
-                <div class="welcome-subtitle">No Key • Free • Powerful</div>
+    <canvas id="canvas"></canvas>
+    <div class="container">
+        <h1>Chào mừng đến với Luong Skibidi! 🎉</h1>
+    <p>Đây là trang web cá nhân vui vẻ và sáng tạo.</p>
+    <div class="skibidi">Skibidi Bop Bop! 💥</div>
+    <button onclick="window.location.href='home.html'">Click Me!</button>
+
+    <div class="content">
+        <h2>Về Luong Skibidi</h2>
+        <p>Luong Skibidi là một người yêu thích công nghệ, lập trình và những điều vui vẻ. Trang web này được tạo để thể hiện sự sáng tạo và niềm vui.</p>
+        <ul>
+            <li>💻 Thích lập trình web</li>
+            <li>🎮 Yêu thích game</li>
+            <li>🎵 Nghe nhạc chill</li>
+        </ul>
+    </div>
+
+        <footer>
+            <p>&copy; 2025 Luong Skibidi. Tất cả quyền được bảo lưu.</p>
+            <p>Liên hệ: luongskibidi@example.com</p>
+        </footer>
+    </div>
+
+    <div id="uiModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUI()">&times;</span>
+            <div class="tabs">
+                <button class="tab-button active" onclick="openTab('main')">Main</button>
+                <button class="tab-button" onclick="openTab('script')">Script</button>
+                <button class="tab-button" onclick="openTab('client')">Client</button>
+                <button class="tab-button" onclick="openTab('profile')">Profile</button>
             </div>
-            <div class="welcome-loading">
-                <div class="loading-bar">
-                    <div class="loading-progress"></div>
-                </div>
-                <div class="loading-text">Loading...</div>
+            <div id="main" class="tab-content active">
+                <h2>Main</h2>
+                <p>Chào mừng đến với Luong Skibidi Hub!</p>
+                <p>Đây là trang chính với các tính năng tuyệt vời.</p>
+            </div>
+            <div id="script" class="tab-content">
+                <h2>Scripts</h2>
+                <ul>
+                    <li>Auto Fruit</li>
+                    <li>Blox Fruits</li>
+                    <li>Kaitun Scripts</li>
+                    <li>Và nhiều hơn nữa...</li>
+                </ul>
+            </div>
+            <div id="client" class="tab-content">
+                <h2>Client</h2>
+                <p>Thông tin về client: Executor TDT No Key</p>
+                <p>Phiên bản: Latest</p>
+                <p>Trạng thái: Online</p>
+            </div>
+            <div id="profile" class="tab-content">
+                <h2>Profile</h2>
+                <p>Tên: Luong Skibidi</p>
+                <p>Nghề nghiệp: Developer</p>
+                <p>Sở thích: Coding, Gaming</p>
             </div>
         </div>
     </div>
 
-    <div class="background-animation"></div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-    <header class="header" id="mainHeader">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-bolt logo-icon"></i>
-                <h1>Explotis TDT</h1>
-            </div>
-            <nav class="nav">
-                <a href="#home">Home</a>
-                <a href="downloads.php">Downloads</a>
-                <a href="#features">Features</a>
-                <a href="#contact">Support</a>
-                <a href="scripts.php">Scripts</a>
-            </nav>
-        </div>
-    </header>
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
 
-    <main id="mainContent">
-        <section id="home" class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h2>Executor TDT</h2>
-                        <p class="subtitle">Discord.gg/tdtfreenokey</p>
-                        <p class="description">Exploits Client TDT No Key - Owner Form VietNam</p>
-                        <div class="hero-stats">
-                            <div class="stat">
-                                <div class="stat-number">+9999%</div>
-                                <div class="stat-label">Downloads</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-number">+99%</div>
-                                <div class="stat-label">Uptime</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-number">24/7</div>
-                                <div class="stat-label">Support</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hero-visual">
-                        <div class="executor-box">
-                            <div class="code-window">
-                                <div class="code-header">
-                                    <span class="dot red"></span>
-                                    <span class="dot yellow"></span>
-                                    <span class="dot green"></span>
-                                    <span class="code-title">tdt.lua</span>
-                                </div>
-                                <div class="code-content">
-                                    <div class="code-line"><span class="keyword">Exploits TDT</span> <span class="function"></span>()</div>
-                                    <div class="code-line"> <span class="comment">-- Advanced execution TDT</span></div>
-                                    <div class="code-line"> <span class="keyword">print</span>(<span class="string">"TDT No Key On Top!"</span>)</div>
-                                    <div class="code-line"><span class="keyword">end</span></div>
-                                    <div class="cursor">|</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
 
-        <!-- Shop Game Banner - Nổi bật nhất -->
-        <section id="shop-game" class="shop-game-banner">
-            <div class="container">
-                <div class="shop-game-content">
-                    <div class="shop-game-icon"><i class="fas fa-shopping-cart"></i></div>
-                    <h2 class="shop-game-title">
-                        <span class="shop-title-text">SHOP GAME</span>
-                    </h2>
-                    <p class="shop-game-description">Mua bán Account Roblox - Free Fire uy tín, giá tốt nhất thị trường!</p>
-                    <div class="shop-game-features">
-                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Trusted Account</span>
-                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Best Price</span>
-                        <span class="shop-feature"><i class="fas fa-check-circle"></i> Support 24/7</span>
-                    </div>
-                    <a href="https://thinhrobloxviet.com/" target="_blank" class="shop-game-btn">
-                        <span class="shop-btn-text">Visit Shop Now</span>
-                        <i class="fas fa-arrow-right shop-btn-arrow"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
+        class Particle {
+            constructor(x, y, size, color, weight) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.color = color;
+                this.weight = weight;
+                this.originalSize = size;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            update() {
+                this.size -= 0.02;
+                if (this.size < 0) {
+                    this.x = mouse.x + (Math.random() - 0.5) * 100;
+                    this.y = mouse.y + (Math.random() - 0.5) * 100;
+                    this.size = Math.random() * 8 + 3;
+                    this.originalSize = this.size;
+                    this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                }
+                if (mouse.x && mouse.y) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        let angle = Math.atan2(dy, dx);
+                        this.x -= Math.cos(angle) * force * this.weight;
+                        this.y -= Math.sin(angle) * force * this.weight;
+                        this.size = Math.min(this.originalSize * (1 + force * 0.5), this.originalSize * 2);
+                    } else {
+                        this.size = Math.max(this.size - 0.1, this.originalSize * 0.5);
+                    }
+                }
+            }
+        }
 
-        <section id="download" class="download-section">
-            <div class="container">
-                <h2 class="section-title">Download Executor</h2>
-                <div class="download-grid">
-                                                                                                    <div class="download-card featured">
-                                                                    <div class="featured-badge">
-                                        <i class="fas fa-fire"></i> VipPro TDT                                    </div>
-                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Exploits-TDT-Api1.exe</h3>
-                                <div class="version-info">
-                                    <span class="version">TDT</span>
-                                    <span class="size">571 MB</span>
-                                </div>
-                                <p class="card-description">Unc 96%, Sunc 98%, Run Windows 10/11</p>
-                                <div class="download-count">Loaded: 110</div>
-                                                                    <a href="download.php?type=Free No Key" class="btn-download premium">
-                                        <span class="btn-text">Download</span>
-                                        <i class="fas fa-arrow-down btn-icon"></i>
-                                    </a>
-                                                            </div>
-                                                                                <div class="download-card ">
-                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Update Api</h3>
-                                <div class="version-info">
-                                    <span class="version">TDT</span>
-                                    <span class="size"></span>
-                                </div>
-                                <p class="card-description">Unc 92%, Sunc 91%, Run Windows 10/11</p>
-                                <div class="download-count">Loaded: 9</div>
-                                                                    <div class="btn-download" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
-                                        <span class="btn-text">Chưa có link</span>
-                                        <i class="fas fa-exclamation-triangle btn-icon"></i>
-                                    </div>
-                                                            </div>
-                                                                                <div class="download-card ">
-                                                                <div class="card-icon"><i class="fas fa-download"></i></div>                                <h3>Roblox-Exploits-TDT.exe</h3>
-                                <div class="version-info">
-                                    <span class="version">TDT</span>
-                                    <span class="size">180 MB</span>
-                                </div>
-                                <p class="card-description">Roblox Beta</p>
-                                <div class="download-count">Loaded: 107</div>
-                                                                    <a href="download.php?type=Pc" class="btn-download ">
-                                        <span class="btn-text">Download</span>
-                                        <i class="fas fa-arrow-down btn-icon"></i>
-                                    </a>
-                                                            </div>
-<previous line repeated 1 additional times>
-            </div>
-        </section>
+        function init() {
+            particles = [];
+            for (let i = 0; i < 150; i++) {
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                let size = Math.random() * 8 + 3;
+                let color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                let weight = Math.random() * 0.8 + 0.2;
+                particles.push(new Particle(x, y, size, color, weight));
+            }
+        }
 
-        <section id="features" class="features-section">
-            <div class="container">
-                <h2 class="section-title">Features</h2>
-                <div class="features-grid">
-                                            <div class="feature-card">
-                            <div class="feature-icon"><i class="fas fa-bolt"></i></div>                            <h3>Lightning Fast</h3>
-                            <p>Ultra-fast script execution with optimized performance</p>
-                        </div>
-                                            <div class="feature-card">
-                            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>                            <h3>Secure</h3>
-                            <p>Advanced anti-ban protection and safety features</p>
-                        </div>
-                                            <div class="feature-card">
-                            <div class="feature-icon"><i class="fas fa-bullseye"></i></div>                            <h3>Accurate</h3>
-                            <p>Precise execution with zero errors guaranteed</p>
-                        </div>
-                                            <div class="feature-card">
-                            <div class="feature-icon"><i class="fas fa-comments"></i></div>                            <h3>Community</h3>
-                            <p>Join our active community for support</p>
-                        </div>
-                                    </div>
-            </div>
-        </section>
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
 
-        <section id="contact" class="contact-section">
-            <div class="container">
-                <h2 class="section-title">Support</h2>
-                <div class="contact-info">
-                                            <div class="info-card">
-                            <div class="info-icon"><i class="fas fa-comments"></i></div>                            <h3>Discord</h3>
-                            <p>Check out our Discord server</p>
-                                                            <a href="https://discord.gg/tdtfreenokey" target="_blank" class="contact-link">
-                                    discord.gg                                </a>
-                                                    </div>
-                                            <div class="info-card">
-                            <div class="info-icon"><i class="fas fa-comments"></i></div>                            <h3>Zalo</h3>
-                            <p>Check out our Group Zalo</p>
-                                                            <a href="https://zalo.me/g/qihvbb859" target="_blank" class="contact-link">
-                                    zalo.me                                </a>
-                                                    </div>
-                                            <div class="info-card">
-                            <div class="info-icon"><i class="fas fa-globe"></i></div>                            <h3>Shop Game</h3>
-                            <p>Sell Account Roblox - Free Fire</p>
-                                                            <a href="https://thinhrobloxviet.com/" target="_blank" class="contact-link">
-                                    thinhrobloxviet.com                                </a>
-                                                    </div>
-                                    </div>
-            </div>
-        </section>
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
 
-    </main>
+        function openUI() {
+            document.getElementById('uiModal').style.display = 'block';
+        }
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Explotis TDT. All rights reserved.</p>
-        </div>
-    </footer>
+        function closeUI() {
+            document.getElementById('uiModal').style.display = 'none';
+        }
 
-    <div id="notification" class="notification"></div>
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
 
-    <!-- Music Player -->
-    <div class="music-player">
-        <div class="music-controls">
-            <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">
-                <i class="fas fa-volume-up" id="musicIcon"></i>
-            </button>
-            <div class="music-info">
-                <div class="music-title"><i class="fas fa-music"></i> Background Music</div>
-                <input type="range" id="volumeControl" min="0" max="100" value="50" oninput="changeVolume(this.value)">
-            </div>
-        </div>
-        <audio id="backgroundMusic" loop>
-            <!-- 🎵 Nhạc Chill - Link trực tiếp -->
-            <!-- Có thể thay bằng link nhạc khác nếu muốn -->
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
-
-            <!-- Backup: Các link nhạc chill khác -->
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-
-            <!-- File local (nếu có file trong thư mục music/) -->
-            <source src="music/background.mp3" type="audio/mpeg">
-            <source src="music/background.ogg" type="audio/ogg">
-
-            Your browser does not support the audio element.
-        </audio>
-    </div>
-
-    
-    <script src="assets/script.js"></script>
+        init();
+        animate();
+    </script>
 </body>
-
 </html>
