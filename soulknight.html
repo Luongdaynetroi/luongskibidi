@@ -16,6 +16,16 @@
         <div>Health: <span id="health">100</span></div>
         <div>Score: <span id="score">0</span></div>
         <div>Level: <span id="level">1</span></div>
+        <div>Weapon: <span id="weapon">Pistol</span></div>
+        <div>Coins: <span id="coins">0</span></div>
+    </div>
+
+    <div id="upgradeScreen" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:black; color:white; padding:20px; border:2px solid white;">
+        <h2>Level Up!</h2>
+        <button onclick="upgrade('health')">Increase Health +20</button><br>
+        <button onclick="upgrade('speed')">Increase Speed +1</button><br>
+        <button onclick="upgrade('damage')">Increase Damage +1</button><br>
+        <button onclick="upgrade('pet')">Add Pet</button><br>
     </div>
 
     <script>
@@ -24,17 +34,161 @@
         const healthEl = document.getElementById('health');
         const scoreEl = document.getElementById('score');
         const levelEl = document.getElementById('level');
+        const weaponEl = document.getElementById('weapon');
+        const coinsEl = document.getElementById('coins');
 
         // Game variables
         let player = { x: 400, y: 300, size: 20, health: 100, speed: 5 };
         let bullets = [];
         let enemies = [];
+        let collectibles = [];
+        let pets = [];
         let keys = {};
         let score = 0;
         let level = 1;
+        let coins = 0;
+        let currentWeapon = 'pistol';
+        let rooms = [];
+        let currentRoomId = 0;
+        let currentRoom = null;
+        let gameState = 'playing'; // 'playing', 'upgrade'
+
+        // Room class
+        class Room {
+            constructor(id, enemies = [], doors = [], walls = []) {
+                this.id = id;
+                this.enemies = enemies;
+                this.doors = doors; // [{x, y, nextId}]
+                this.walls = walls; // [{x, y, w, h}]
+                this.cleared = false;
+            }
+        }
+
+        // Pet class
+        class Pet {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 10;
+                this.speed = 3;
+                this.target = null;
+            }
+
+            update() {
+                // Move towards player
+                const dx = player.x - this.x;
+                const dy = player.y - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > 50) {
+                    this.x += (dx / dist) * this.speed;
+                    this.y += (dy / dist) * this.speed;
+                }
+
+                // Find target
+                if (!this.target || Math.sqrt((this.target.x - this.x)**2 + (this.target.y - this.y)**2) > 100) {
+                    this.target = enemies.find(e => Math.sqrt((e.x - this.x)**2 + (e.y - this.y)**2) < 100);
+                }
+
+                if (this.target) {
+                    const dx2 = this.target.x - this.x;
+                    const dy2 = this.target.y - this.y;
+                    const dist2 = Math.sqrt(dx2*dx2 + dy2*dy2);
+                    if (dist2 > 0) {
+                        this.x += (dx2 / dist2) * this.speed;
+                        this.y += (dy2 / dist2) * this.speed;
+                    }
+
+                    // Attack
+                    if (dist2 < 20) {
+                        this.target.health -= 1;
+                        if (this.target.health <= 0) {
+                            enemies.splice(enemies.indexOf(this.target), 1);
+                            score += this.target.type === 'boss' ? 50 : this.target.type === 'tank' ? 20 : 10;
+                            collectibles.push({x: this.target.x, y: this.target.y, type: 'coin'});
+                        }
+                        this.target = null;
+                    }
+                }
+            }
+        }
+
+        // Initialize rooms
+        function initRooms() {
+            // Room 0: Start
+            rooms.push(new Room(0, [
+                { type: 'normal' },
+                { type: 'normal' },
+                { type: 'fast' },
+                { type: 'fast' },
+                { type: 'tank' }
+            ], [{x: 750, y: 300, nextId: 1}], []));
+
+            // Room 1: Middle
+            rooms.push(new Room(1, [
+                { type: 'tank' },
+                { type: 'tank' },
+                { type: 'fast' },
+                { type: 'fast' },
+                { type: 'normal' },
+                { type: 'normal' }
+            ], [{x: 50, y: 300, nextId: 0}, {x: 750, y: 300, nextId: 2}], []));
+
+            // Room 2: Boss
+            rooms.push(new Room(2, [
+                { type: 'boss' },
+                { type: 'tank' },
+                { type: 'tank' },
+                { type: 'fast' }
+            ], [], []));
+
+            currentRoom = rooms[0];
+            enemies = [...currentRoom.enemies];
+            setEnemyProperties();
+        }
+
+        function setEnemyProperties() {
+            enemies.forEach(e => {
+                if (e.type === 'fast') {
+                    e.x = Math.random() * canvas.width;
+                    e.y = Math.random() * canvas.height;
+                    e.speed = 4;
+                    e.size = 10;
+                    e.health = 1;
+                    e.maxHealth = 1;
+                } else if (e.type === 'tank') {
+                    e.x = Math.random() * canvas.width;
+                    e.y = Math.random() * canvas.height;
+                    e.speed = 1;
+                    e.size = 30;
+                    e.health = 3;
+                    e.maxHealth = 3;
+                } else if (e.type === 'boss') {
+                    e.x = 400;
+                    e.y = 200;
+                    e.speed = 1;
+                    e.size = 40;
+                    e.health = 10;
+                    e.maxHealth = 10;
+                } else { // normal
+                    e.x = Math.random() * canvas.width;
+                    e.y = Math.random() * canvas.height;
+                    e.speed = 2;
+                    e.size = 15;
+                    e.health = 1;
+                    e.maxHealth = 1;
+                }
+            });
+        }
+
+        initRooms();
 
         // Event listeners
-        document.addEventListener('keydown', (e) => keys[e.code] = true);
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            if (e.code === 'Digit1') currentWeapon = 'pistol';
+            else if (e.code === 'Digit2') currentWeapon = 'shotgun';
+            else if (e.code === 'Digit3') currentWeapon = 'laser';
+        });
         document.addEventListener('keyup', (e) => keys[e.code] = false);
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -47,14 +201,102 @@
             const dx = tx - player.x;
             const dy = ty - player.y;
             const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist > 0) {
+            if (dist === 0) return;
+
+            if (currentWeapon === 'pistol') {
                 bullets.push({
                     x: player.x,
                     y: player.y,
                     dx: (dx / dist) * 10,
-                    dy: (dy / dist) * 10
+                    dy: (dy / dist) * 10,
+                    type: 'bullet'
+                });
+            } else if (currentWeapon === 'shotgun') {
+                for (let i = -2; i <= 2; i++) {
+                    const angle = Math.atan2(dy, dx) + i * 0.2;
+                    bullets.push({
+                        x: player.x,
+                        y: player.y,
+                        dx: Math.cos(angle) * 8,
+                        dy: Math.sin(angle) * 8,
+                        type: 'bullet'
+                    });
+                }
+            } else if (currentWeapon === 'laser') {
+                // Laser: damage all enemies in line
+                const laserLength = 400;
+                const endX = player.x + (dx / dist) * laserLength;
+                const endY = player.y + (dy / dist) * laserLength;
+                enemies.forEach(e => {
+                    if (pointToLineDistance(e.x, e.y, player.x, player.y, endX, endY) < e.size/2) {
+                        e.health -= 2;
+                        if (e.health <= 0) {
+                            enemies.splice(enemies.indexOf(e), 1);
+                            score += e.type === 'boss' ? 50 : e.type === 'tank' ? 20 : 10;
+                            collectibles.push({x: e.x, y: e.y, type: 'coin'});
+                        }
+                    }
+                });
+                // Add laser effect
+                bullets.push({
+                    x: player.x,
+                    y: player.y,
+                    endX: endX,
+                    endY: endY,
+                    type: 'laser',
+                    life: 10
                 });
             }
+        }
+
+        function pointToLineDistance(px, py, x1, y1, x2, y2) {
+            const A = px - x1;
+            const B = py - y1;
+            const C = x2 - x1;
+            const D = y2 - y1;
+            const dot = A * C + B * D;
+            const lenSq = C * C + D * D;
+            let param = -1;
+            if (lenSq !== 0) param = dot / lenSq;
+            let xx, yy;
+            if (param < 0) {
+                xx = x1;
+                yy = y1;
+            } else if (param > 1) {
+                xx = x2;
+                yy = y2;
+            } else {
+                xx = x1 + param * C;
+                yy = y1 + param * D;
+            }
+            const dx = px - xx;
+            const dy = py - yy;
+            return Math.sqrt(dx*dx + dy*dy);
+        }
+
+        function upgrade(type) {
+            if (type === 'health') player.health += 20;
+            else if (type === 'speed') player.speed += 1;
+            else if (type === 'pet') pets.push(new Pet(player.x, player.y));
+            document.getElementById('upgradeScreen').style.display = 'none';
+            gameState = 'playing';
+            nextLevel();
+        }
+
+        function nextLevel() {
+            level++;
+            // Reset cleared
+            rooms.forEach(r => r.cleared = false);
+            // Increase difficulty
+            rooms.forEach(r => {
+                r.enemies.push({type: 'normal'}, {type: 'fast'});
+            });
+            currentRoomId = 0;
+            currentRoom = rooms[0];
+            enemies = [...currentRoom.enemies];
+            setEnemyProperties();
+            player.x = 50;
+            player.y = 300;
         }
 
         function update() {
@@ -68,23 +310,30 @@
             player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
             player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
 
-            // Update bullets
-            bullets = bullets.filter(b => {
-                b.x += b.dx;
-                b.y += b.dy;
-                return b.x > 0 && b.x < canvas.width && b.y > 0 && b.y < canvas.height;
+            // Collision with walls
+            currentRoom.walls.forEach(wall => {
+                if (player.x < wall.x + wall.w && player.x + player.size > wall.x &&
+                    player.y < wall.y + wall.h && player.y + player.size > wall.y) {
+                    // Simple push back
+                    if (player.x < wall.x) player.x = wall.x - player.size;
+                    else if (player.x > wall.x + wall.w) player.x = wall.x + wall.w;
+                    if (player.y < wall.y) player.y = wall.y - player.size;
+                    else if (player.y > wall.y + wall.h) player.y = wall.y + wall.h;
+                }
             });
 
-            // Spawn enemies
-            if (Math.random() < 0.02) {
-                const side = Math.floor(Math.random() * 4);
-                let x, y;
-                if (side === 0) { x = 0; y = Math.random() * canvas.height; }
-                else if (side === 1) { x = canvas.width; y = Math.random() * canvas.height; }
-                else if (side === 2) { x = Math.random() * canvas.width; y = 0; }
-                else { x = Math.random() * canvas.width; y = canvas.height; }
-                enemies.push({ x, y, size: 15, health: 1, speed: 2 });
-            }
+            // Update bullets
+            bullets = bullets.filter(b => {
+                if (b.type === 'laser') {
+                    b.life--;
+                    return b.life > 0;
+                } else {
+                    b.x += b.dx;
+                    b.y += b.dy;
+                    return b.x > 0 && b.x < canvas.width && b.y > 0 && b.y < canvas.height;
+                }
+            });
+
 
             // Update enemies
             enemies.forEach(e => {
@@ -97,14 +346,39 @@
                 }
             });
 
+            // Check if room cleared
+            if (enemies.length === 0 && !currentRoom.cleared) {
+                currentRoom.cleared = true;
+            }
+
+            // Check door collision
+            if (currentRoom.cleared) {
+                currentRoom.doors.forEach(door => {
+                    const dx = player.x - door.x;
+                    const dy = player.y - door.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < 50) {
+                        currentRoomId = door.nextId;
+                        currentRoom = rooms[door.nextId];
+                        enemies = [...currentRoom.enemies];
+                        setEnemyProperties();
+                        player.x = 50; // Reset player position
+                        player.y = 300;
+                        if (currentRoomId === rooms.length - 1 && currentRoom.cleared) {
+                            gameState = 'upgrade';
+                            document.getElementById('upgradeScreen').style.display = 'block';
+                        }
+                    }
+                });
+            }
+
             // Collision bullets-enemies
             bullets.forEach(b => {
                 enemies.forEach(e => {
-                    if (Math.abs(b.x - e.x) < 10 && Math.abs(b.y - e.y) < 10) {
+                    if (Math.abs(b.x - e.x) < e.size/2 + 5 && Math.abs(b.y - e.y) < e.size/2 + 5) {
                         e.health--;
                         if (e.health <= 0) {
                             enemies.splice(enemies.indexOf(e), 1);
-                            score += 10;
+                            score += e.type === 'boss' ? 50 : e.type === 'tank' ? 20 : 10;
                         }
                         bullets.splice(bullets.indexOf(b), 1);
                     }
@@ -123,10 +397,23 @@
                 }
             });
 
+            // Update pets
+            pets.forEach(p => p.update());
+
+            // Collision player-collectibles
+            collectibles.forEach(c => {
+                if (Math.abs(player.x - c.x) < 20 && Math.abs(player.y - c.y) < 20) {
+                    if (c.type === 'coin') coins += 5;
+                    collectibles.splice(collectibles.indexOf(c), 1);
+                }
+            });
+
             // Update UI
             healthEl.textContent = player.health;
             scoreEl.textContent = score;
             levelEl.textContent = level;
+            weaponEl.textContent = currentWeapon.charAt(0).toUpperCase() + currentWeapon.slice(1);
+            coinsEl.textContent = coins;
         }
 
         function draw() {
@@ -138,17 +425,69 @@
             ctx.fillRect(player.x - player.size/2, player.y - player.size/2, player.size, player.size);
 
             // Bullets
-            ctx.fillStyle = 'yellow';
-            bullets.forEach(b => ctx.fillRect(b.x - 2, b.y - 2, 4, 4));
+            bullets.forEach(b => {
+                if (b.type === 'laser') {
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(b.x, b.y);
+                    ctx.lineTo(b.endX, b.endY);
+                    ctx.stroke();
+                } else {
+                    ctx.fillStyle = 'yellow';
+                    ctx.fillRect(b.x - 2, b.y - 2, 4, 4);
+                }
+            });
 
             // Enemies
-            ctx.fillStyle = 'red';
-            enemies.forEach(e => ctx.fillRect(e.x - e.size/2, e.y - e.size/2, e.size, e.size));
+            enemies.forEach(e => {
+                if (e.type === 'fast') ctx.fillStyle = 'cyan';
+                else if (e.type === 'tank') ctx.fillStyle = 'orange';
+                else if (e.type === 'boss') ctx.fillStyle = 'purple';
+                else ctx.fillStyle = 'red';
+                ctx.fillRect(e.x - e.size/2, e.y - e.size/2, e.size, e.size);
+
+                // Health bar
+                const barWidth = e.size;
+                const barHeight = 5;
+                ctx.fillStyle = 'red';
+                ctx.fillRect(e.x - barWidth/2, e.y - e.size/2 - 10, barWidth, barHeight);
+                ctx.fillStyle = 'green';
+                ctx.fillRect(e.x - barWidth/2, e.y - e.size/2 - 10, barWidth * (e.health / e.maxHealth), barHeight);
+            });
+
+            // Doors
+            ctx.fillStyle = 'green';
+            currentRoom.doors.forEach(door => {
+                ctx.fillRect(door.x - 10, door.y - 10, 20, 20);
+            });
+
+            // Walls
+            ctx.fillStyle = 'gray';
+            currentRoom.walls.forEach(wall => {
+                ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+            });
+
+            // Pets
+            ctx.fillStyle = 'lime';
+            pets.forEach(p => ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size));
+
+            // Collectibles
+            collectibles.forEach(c => {
+                if (c.type === 'coin') {
+                    ctx.fillStyle = 'gold';
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
         }
 
         function gameLoop() {
-            update();
-            draw();
+            if (gameState === 'playing') {
+                update();
+                draw();
+            }
             requestAnimationFrame(gameLoop);
         }
 
