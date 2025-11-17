@@ -18,17 +18,37 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e, #0f0f23);
+            background-size: 400% 400%;
             color: #fff;
             line-height: 1.6;
             overflow-x: hidden;
-            animation: bgShift 15s ease infinite;
+            animation: cosmicShift 20s ease infinite;
+            position: relative;
         }
-        @keyframes bgShift {
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 255, 198, 0.2) 0%, transparent 50%);
+            animation: float 30s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes cosmicShift {
             0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
             100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
         }
 
         nav {
@@ -55,6 +75,18 @@
             color: #4ecdc4;
         }
 
+        .flag-btn {
+            font-size: 1.5rem;
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .flag-btn:hover {
+            transform: scale(1.2);
+        }
+
         nav ul {
             display: flex;
             list-style: none;
@@ -72,6 +104,62 @@
 
         nav ul li a:hover {
             color: #4ecdc4;
+        }
+
+        .music-controls {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 0.5rem;
+            margin-left: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .music-btn:hover {
+            color: #4ecdc4;
+            transform: scale(1.1);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #2a2a2a, #0a0a0a);
+            color: #e0e0e0;
+        }
+
+        body.dark-mode nav {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        body.dark-mode .feature-card,
+        body.dark-mode .blog-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .hero {
@@ -156,12 +244,17 @@
             font-weight: 700;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-            animation: fadeInUp 1s ease-out 1s both;
+            animation: fadeInUp 1s ease-out 1s both, btnFloat 3s ease-in-out infinite;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.7), 0 0 20px rgba(78, 205, 196, 0.5);
+        }
+
+        @keyframes btnFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
         }
 
         .fade-in {
@@ -239,6 +332,35 @@
             font-size: 2.5rem;
             margin-bottom: 3rem;
             color: #ff6b6b;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .blog-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-card p {
+            margin-bottom: 1rem;
         }
 
         .roblox-tabs {
@@ -344,6 +466,7 @@
 <body>
     <nav>
         <div class="container">
+            <a href="https://bantuyenngondoclaphcm.vercel.app/" class="flag-btn" title="Bản tuyên ngôn độc lập HCM">🇻🇳</a>
             <div class="logo">luongdaynetroi</div>
             <ul>
                 <li><a href="#home">Home</a></li>
@@ -354,6 +477,12 @@
                 <li><a href="login.html">Login</a></li>
                 <li><a href="https://luongskibidi.vercel.app">Main Page</a></li>
             </ul>
+            <div class="music-controls">
+                <button class="music-btn" onclick="prevSong()" title="Previous Song">⏮️</button>
+                <button class="music-btn" onclick="toggleMusic()" title="Play/Pause Music">▶️</button>
+                <button class="music-btn" onclick="nextSong()" title="Next Song">⏭️</button>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
         </div>
     </nav>
 
@@ -439,12 +568,120 @@
         </div>
     </footer>
 
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundjay.com/misc/sounds/ambient-space-sound-1.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
     <script>
         // View counter
         let viewCount = localStorage.getItem('viewCount') || 0;
         viewCount = parseInt(viewCount) + 1;
         document.getElementById('viewCount').textContent = viewCount;
         localStorage.setItem('viewCount', viewCount);
+
+        // Particles
+        const canvas = document.createElement('canvas');
+        canvas.id = 'particleCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '-1';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 150;
+        const connectionDistance = 120;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 3 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const hover = distance < this.size * 2;
+                const size = hover ? this.size * 1.5 : this.size;
+                const opacity = hover ? 1 : 0.8;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.fill();
+
+                if (hover) {
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectionDistance})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
 
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -483,6 +720,53 @@
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const toggleBtn = document.querySelector('.theme-toggle[onclick*="toggleTheme"]');
+            toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Music player
+        let musicPlaying = false;
+        const bgMusic = document.getElementById('bgMusic');
+        const songs = [
+            '1.mp3',
+            '2.mp3',
+            '3.mp3',
+            '4.mp3'
+        ];
+        let currentSongIndex = Math.floor(Math.random() * songs.length);
+        bgMusic.src = songs[currentSongIndex];
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicPlaying = false;
+            } else {
+                bgMusic.play();
+                musicPlaying = true;
+            }
+            updateMusicButton();
+        }
+
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            bgMusic.src = songs[currentSongIndex];
+            if (musicPlaying) bgMusic.play();
+        }
+
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            bgMusic.src = songs[currentSongIndex];
+            if (musicPlaying) bgMusic.play();
+        }
+
+        function updateMusicButton() {
+            const musicBtn = document.querySelector('.theme-toggle[onclick*="toggleMusic"]');
+            musicBtn.textContent = musicPlaying ? '⏸️' : '▶️';
+        }
     </script>
 </body>
 </html>
