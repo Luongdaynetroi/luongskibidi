@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Luong Skibidi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e, #0f0f23);
+            background-size: 400% 400%;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 255, 198, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #2a2a2a, #0a0a0a);
+            color: #e0e0e0;
+        }
+
+        @keyframes cosmicShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .container {
+            background: rgba(44, 62, 80, 0.95);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        body.dark-mode .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        body.dark-mode .tabs {
+            background: #34495e;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #bdc3c7;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            background: white;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: #3498db;
+            background: #2c3e50;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        body.dark-mode .form-group label {
+            color: #ecf0f1;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #333;
+        }
+
+        body.dark-mode .form-group input {
+            background: #34495e;
+            border-color: #5d6d7e;
+            color: #ecf0f1;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-google {
+            background: white;
+            color: #757575;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-google i {
+            margin-right: 10px;
+            color: #4285f4;
+        }
+
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #667eea;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        body.dark-mode .modal-content {
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        body.dark-mode .modal h3 {
+            color: #ecf0f1;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        body.dark-mode .modal input {
+            background: #2c3e50;
+            border-color: #5d6d7e;
+            color: #ecf0f1;
+        }
+
+        .modal .btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        body.dark-mode .alert.success {
+            background: #2d5a2d;
+            color: #d4edda;
+        }
+
+        body.dark-mode .alert.error {
+            background: #5a2d2d;
+            color: #f8d7da;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                max-width: none;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .social-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>Chào mừng</h1>
+            <p>Đăng nhập hoặc tạo tài khoản mới</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showForm('login')">Đăng Nhập</button>
+            <button class="tab-btn" onclick="showForm('signup')">Đăng Ký</button>
+        </div>
+
+        <div class="form-container">
+            <div id="alert" class="alert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Tên đăng nhập hoặc Email</label>
+                    <input type="text" id="loginUsername" placeholder="Nhập tên đăng nhập hoặc email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Ghi nhớ đăng nhập</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Đăng Nhập</button>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Quên mật khẩu?</a>
+                </div>
+            </form>
+
+            <form id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label for="signupFullname">Họ và tên</label>
+                    <input type="text" id="signupFullname" placeholder="Nhập họ và tên" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupUsername">Tên đăng nhập</label>
+                    <input type="text" id="signupUsername" placeholder="Nhập tên đăng nhập" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="Nhập email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Mật khẩu</label>
+                    <input type="password" id="signupPassword" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Nhập lại mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Ngày sinh</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Đăng Ký</button>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a href="home.html">← Quay lại trang chủ</a>
+        </div>
+    </div>
+
+    <div id="forgot-modal" class="modal">
+        <div class="modal-content">
+            <h3>Đặt lại mật khẩu</h3>
+            <div id="forgot-step1">
+                <p>Nhập email của bạn để nhận mã xác nhận:</p>
+                <input type="email" id="forgot-email" placeholder="Nhập email" required>
+                <button onclick="sendResetCode()" class="btn btn-primary">Gửi mã</button>
+            </div>
+            <div id="forgot-step2" style="display: none;">
+                <p>Nhập mã xác nhận (demo: 123456):</p>
+                <input type="text" id="reset-code" placeholder="Nhập mã" required>
+                <p>Mật khẩu mới:</p>
+                <input type="password" id="new-password" placeholder="Mật khẩu mới" required>
+                <button onclick="resetPassword()" class="btn btn-primary">Đặt lại mật khẩu</button>
+            </div>
+            <button onclick="closeForgotModal()" style="background: #6c757d; color: white; margin-top: 10px;">Đóng</button>
+        </div>
+    </div>
+
+    <canvas id='particleCanvas'></canvas>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.theme-toggle i');
+            icon.className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Load theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+        }
+
+        // Tab switching
+        function showForm(formType) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.tab-btn');
+            if (formType === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+            hideAlert();
+        }
+
+        // Alert functions
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+        }
+
+        function hideAlert() {
+            document.getElementById('alert').style.display = 'none';
+        }
+
+        // Load saved credentials
+        window.addEventListener('load', function() {
+            const savedUsername = localStorage.getItem('username');
+            const savedPassword = localStorage.getItem('password');
+            if (savedUsername) {
+                document.getElementById('loginUsername').value = savedUsername;
+                document.getElementById('remember').checked = true;
+            }
+            if (savedPassword) {
+                document.getElementById('loginPassword').value = savedPassword;
+            }
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const remember = document.getElementById('remember').checked;
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            if (username && password) {
+                if (storedUser && (storedUser.username === username || storedUser.email === username) && storedUser.password === password) {
+                    if (remember) {
+                        localStorage.setItem('username', username);
+                        localStorage.setItem('password', password);
+                    } else {
+                        localStorage.removeItem('username');
+                        localStorage.removeItem('password');
+                    }
+                    localStorage.setItem('loggedIn', 'true');
+                    showAlert('Đăng nhập thành công!', 'success');
+                    window.location.href = 'home.html';
+                } else {
+                    showAlert('Tên đăng nhập, email hoặc mật khẩu không đúng!');
+                }
+            } else {
+                showAlert('Vui lòng nhập đầy đủ thông tin!');
+            }
+        });
+
+        // Signup form submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fullname = document.getElementById('signupFullname').value;
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const dob = document.getElementById('dob').value;
+
+            if (password !== confirmPassword) {
+                showAlert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('Mật khẩu phải có ít nhất 6 ký tự!');
+                return;
+            }
+
+            if (fullname && username && email && password && dob) {
+                const user = { fullname, username, email, password, dob };
+                localStorage.setItem('user', JSON.stringify(user));
+                showAlert('Đăng ký thành công! Bạn có thể đăng nhập ngay.', 'success');
+                showForm('login');
+            } else {
+                showAlert('Vui lòng nhập đầy đủ thông tin!');
+            }
+        });
+
+
+        // Forgot password
+        function showForgotPassword() {
+            document.getElementById('forgot-modal').style.display = 'flex';
+            document.getElementById('forgot-step1').style.display = 'block';
+            document.getElementById('forgot-step2').style.display = 'none';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgot-modal').style.display = 'none';
+        }
+
+        function sendResetCode() {
+            const email = document.getElementById('forgot-email').value;
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            if (storedUser && storedUser.email === email) {
+                showAlert('Mã xác nhận đã được gửi đến email của bạn (demo: 123456)', 'success');
+                document.getElementById('forgot-step1').style.display = 'none';
+                document.getElementById('forgot-step2').style.display = 'block';
+            } else {
+                showAlert('Email không tồn tại!');
+            }
+        }
+
+        function resetPassword() {
+            const code = document.getElementById('reset-code').value;
+            const newPassword = document.getElementById('new-password').value;
+            if (code === '123456' && newPassword) {
+                const storedUser = JSON.parse(localStorage.getItem('user'));
+                storedUser.password = newPassword;
+                localStorage.setItem('user', JSON.stringify(storedUser));
+                showAlert('Mật khẩu đã được đặt lại!', 'success');
+                closeForgotModal();
+            } else {
+                showAlert('Mã không đúng hoặc mật khẩu trống!');
+            }
+        }
+
+        // Particles
+        const canvas = document.getElementById('particleCanvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '-1';
+
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 100;
+        const connectionDistance = 120;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 3 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const hover = distance < this.size * 2;
+                const size = hover ? this.size * 1.5 : this.size;
+                const opacity = hover ? 1 : 0.8;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.fill();
+
+                if (hover) {
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectionDistance})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+    </script>
+</body>
+</html>
