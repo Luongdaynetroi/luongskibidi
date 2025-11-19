@@ -171,26 +171,38 @@
         .music-controls {
             display: flex;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 0.5rem;
+            border-radius: 30px;
+            padding: 0.6rem;
             margin-left: 1rem;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .music-btn {
             background: none;
             border: none;
-            padding: 0.5rem;
+            padding: 0.8rem;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            font-size: 1.4rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .music-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
             color: #4ecdc4;
             transform: scale(1.1);
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
         }
 
         .theme-toggle {
@@ -555,9 +567,9 @@
                 <li><a href="https://luongskibidi.vercel.app">Main Page</a></li>
             </ul>
             <div class="music-controls">
-                <button class="music-btn" onclick="prevSong()" title="Previous Song">⏮️</button>
-                <button class="music-btn" onclick="toggleMusic()" title="Play/Pause Music">▶️</button>
-                <button class="music-btn" onclick="nextSong()" title="Next Song">⏭️</button>
+                <button class="music-btn" onclick="prevSong()" title="Previous Song"><i class="fas fa-step-backward"></i></button>
+                <button class="music-btn" onclick="toggleMusic()" title="Play/Pause Music"><i class="fas fa-play"></i></button>
+                <button class="music-btn" onclick="nextSong()" title="Next Song"><i class="fas fa-step-forward"></i></button>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
         </div>
@@ -828,6 +840,14 @@
         let currentSongIndex = Math.floor(Math.random() * songs.length);
         bgMusic.src = songs[currentSongIndex];
 
+        // Auto-play random song on load
+        bgMusic.play().then(() => {
+            musicPlaying = true;
+            updateMusicButton();
+        }).catch(e => {
+            console.log('Auto-play blocked by browser');
+        });
+
         function toggleMusic() {
             if (musicPlaying) {
                 bgMusic.pause();
@@ -852,8 +872,8 @@
         }
 
         function updateMusicButton() {
-            const musicBtn = document.querySelector('.theme-toggle[onclick*="toggleMusic"]');
-            musicBtn.textContent = musicPlaying ? '⏸️' : '▶️';
+            const playBtn = document.querySelector('.music-btn[onclick*="toggleMusic"] i');
+            playBtn.className = musicPlaying ? 'fas fa-pause' : 'fas fa-play';
         }
 
         // Check login status
