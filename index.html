@@ -3,372 +3,1664 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luong Keocon - Trang Cá Nhân</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128" crossorigin="anonymous"></script>
+    <title>Luong Lofi - Chill Developer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background: radial-gradient(circle, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 50%, #ffd3b6 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            overflow: hidden;
+            color: #2d3748;
+            position: relative;
+            overflow-x: hidden;
         }
-        #canvas {
+
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 211, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(168, 230, 207, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(72, 187, 120, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 10% 30%, rgba(56, 161, 105, 0.05) 0%, transparent 40%);
+            pointer-events: none;
             z-index: -1;
         }
-        .container {
-            z-index: 1;
-            position: relative;
-            max-width: 800px;
+
+        /* Ngọt Band particles */
+        .ngot-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
-        h1 {
-            font-size: 4em;
-            font-weight: 700;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+
+        .ngot-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(72, 187, 120, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 8s linear infinite;
+        }
+
+        .ngot-particle:nth-child(odd) {
+            background: rgba(56, 161, 105, 0.4);
+            animation-duration: 10s;
+        }
+
+        .ngot-particle:nth-child(3n) {
+            background: rgba(255, 211, 182, 0.3);
+            animation-duration: 12s;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Floating elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .ngot-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #48bb78;
+            text-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .band-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #38a169;
+            text-shadow: 0 2px 4px rgba(56, 161, 105, 0.3);
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+        .floating-element:nth-child(3) { top: 60%; left: 20%; animation-delay: 4s; }
+        .floating-element:nth-child(4) { top: 70%; right: 10%; animation-delay: 1s; }
+        .floating-element:nth-child(5) { top: 40%; left: 70%; animation-delay: 3s; }
+        .floating-element:nth-child(6) { top: 15%; left: 80%; animation-delay: 1.5s; }
+        .floating-element:nth-child(7) { top: 25%; right: 5%; animation-delay: 3.5s; }
+        .floating-element:nth-child(8) { top: 55%; left: 5%; animation-delay: 0.8s; }
+        .floating-element:nth-child(9) { top: 75%; right: 20%; animation-delay: 2.2s; }
+        .floating-element:nth-child(10) { top: 35%; left: 60%; animation-delay: 4.1s; }
+        .floating-element:nth-child(11) { top: 5%; left: 40%; animation-delay: 1.8s; }
+        .floating-element:nth-child(12) { top: 85%; right: 30%; animation-delay: 3.8s; }
+        .floating-element:nth-child(13) { top: 45%; left: 15%; animation-delay: 0.5s; }
+        .floating-element:nth-child(14) { top: 65%; right: 25%; animation-delay: 2.8s; }
+        .floating-element:nth-child(15) { top: 30%; left: 85%; animation-delay: 4.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 0 60px;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5), 0 0 40px rgba(78, 205, 196, 0.5);
-            margin-bottom: 30px;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(255, 107, 107, 0.5), 0 0 40px rgba(78, 205, 196, 0.5); }
-            to { text-shadow: 0 0 30px rgba(255, 107, 107, 0.8), 0 0 60px rgba(78, 205, 196, 0.8); }
-        }
-        p {
-            font-size: 1.3em;
-            margin: 20px 0;
-            line-height: 1.8;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-        .skibidi {
-            font-size: 3em;
-            font-weight: 300;
-            margin: 30px 0;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            animation: pulse 3s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        button {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: #fff;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.3em;
             font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            text-shadow: 0 0 20px rgba(72, 187, 120, 0.3);
+            animation: gentleGlow 4s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(72, 187, 120, 0.1), rgba(56, 161, 105, 0.1));
+            border-radius: 20px;
+            z-index: -1;
+            animation: logoPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes gentleGlow {
+            from {
+                filter: brightness(1);
+                text-shadow: 0 0 20px rgba(72, 187, 120, 0.3);
+            }
+            to {
+                filter: brightness(1.1);
+                text-shadow: 0 0 30px rgba(72, 187, 120, 0.5);
+            }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            color: #4a5568;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.9);
+            padding: 35px 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(72, 187, 120, 0.15);
+            border: 2px solid rgba(72, 187, 120, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
         }
-        button::before {
+
+        .feature-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(72, 187, 120, 0.1), transparent);
             transition: left 0.5s;
         }
-        button:hover::before {
+
+        .feature-card:hover::before {
             left: 100%;
         }
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
-        }
-        .content {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 40px 0;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .content h2 {
-            font-size: 2.2em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        .content ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .content li {
-            font-size: 1.2em;
-            margin: 15px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-        }
-        footer {
-            margin-top: 60px;
-            font-size: 1em;
-            opacity: 0.7;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(72, 187, 120, 0.2);
         }
 
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #48bb78;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 25px;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
-            z-index: 10;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background-color: rgba(45, 55, 72, 0.6);
+            backdrop-filter: blur(8px);
         }
+
         .modal-content {
-            background: rgba(26, 26, 46, 0.95);
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            width: 80%;
-            max-width: 600px;
-            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            background: rgba(255,255,255,0.95);
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 850px;
+            box-shadow: 0 20px 60px rgba(72, 187, 120, 0.25);
+            border: 2px solid rgba(72, 187, 120, 0.1);
+            animation: modalSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid rgba(72, 187, 120, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.05), rgba(56, 161, 105, 0.05));
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 2.2rem;
             cursor: pointer;
+            color: #48bb78;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .close:hover {
-            color: #fff;
+            background: rgba(72, 187, 120, 0.1);
+            transform: rotate(90deg);
         }
+
+        .modal-body {
+            padding: 25px 30px;
+        }
+
         .tabs {
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background: rgba(72, 187, 120, 0.05);
+            border-radius: 15px;
+            padding: 5px;
+            border: 1px solid rgba(72, 187, 120, 0.1);
         }
-        .tab-button {
-            background: rgba(255, 255, 255, 0.1);
+
+        .tab-btn {
+            background: none;
             border: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 10px;
-            color: #fff;
+            color: #4a5568;
+            padding: 12px 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 500;
+            flex: 1;
+            font-size: 0.95rem;
         }
-        .tab-button.active {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+            transform: translateY(-2px);
         }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(72, 187, 120, 0.1);
+            color: #48bb78;
+        }
+
         .tab-content {
             display: none;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            animation: fadeIn 0.4s ease-in-out;
         }
+
         .tab-content.active {
             display: block;
         }
-        .tab-content h2 {
-            margin-top: 0;
-            color: #4ecdc4;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .tab-content ul {
-            list-style: none;
-            padding: 0;
+
+        .highlight {
+            background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            font-style: italic;
         }
-        .tab-content li {
-            padding: 5px 0;
+
+        .status {
+            color: #48bb78;
+            font-weight: 600;
+            background: rgba(72, 187, 120, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #4a5568;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.8);
+            margin-top: 40px;
+            border-radius: 20px 20px 0 0;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(72, 187, 120, 0.3);
+            border: 2px solid rgba(72, 187, 120, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .music-player.collapsed {
+            height: 60px;
+        }
+
+        .music-player.collapsed .music-player-body {
+            display: none;
+        }
+
+        .music-player-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(56, 161, 105, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .music-player-header i {
+            color: #48bb78;
+            margin-right: 10px;
+        }
+
+        .music-player-header span {
+            font-weight: 600;
+            color: #2d3748;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .player-toggle {
+            background: none;
+            border: none;
+            color: #48bb78;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .player-toggle:hover {
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        .music-player-body {
+            padding: 20px;
+        }
+
+        .album-art {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .album-cover {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 2px;
+            font-size: 1rem;
+        }
+
+        .track-artist {
+            color: #4a5568;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .play-btn.playing i:before {
+            content: "\f04c"; /* pause icon */
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(72, 187, 120, 0.2);
+            border-radius: 3px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 3px;
+            width: 30%;
+            transition: width 0.3s ease;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-control i {
+            color: #48bb78;
+        }
+
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(72, 187, 120, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #48bb78;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(72, 187, 120, 0.3);
+        }
+
+        /* Achievements Section */
+        .achievements {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(168, 230, 207, 0.1), rgba(220, 237, 200, 0.1));
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .achievement-card {
+            background: rgba(255,255,255,0.9);
+            padding: 30px 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(72, 187, 120, 0.15);
+            border: 2px solid rgba(72, 187, 120, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .achievement-card:nth-child(1) { animation-delay: 0.2s; }
+        .achievement-card:nth-child(2) { animation-delay: 0.4s; }
+        .achievement-card:nth-child(3) { animation-delay: 0.6s; }
+        .achievement-card:nth-child(4) { animation-delay: 0.8s; }
+
+        .achievement-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(72, 187, 120, 0.25);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #48bb78;
+            transition: transform 0.3s ease;
+        }
+
+        .achievement-card:hover .achievement-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .achievement-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .achievement-card p {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .achievement-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(72, 187, 120, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .achievement-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 4px;
+            transition: width 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 0;
+            animation: fillProgress 2s ease-out forwards;
+        }
+
+        .achievement-card:nth-child(1) .progress-fill { animation-delay: 1s; }
+        .achievement-card:nth-child(2) .progress-fill { animation-delay: 1.2s; }
+        .achievement-card:nth-child(3) .progress-fill { animation-delay: 1.4s; }
+        .achievement-card:nth-child(4) .progress-fill { animation-delay: 1.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fillProgress {
+            from { width: 0; }
+            to { width: var(--progress-width, 0); }
+        }
+
+        /* Click Effects */
+        .click-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(72, 187, 120, 0.6), rgba(72, 187, 120, 0));
+            border-radius: 50%;
+            pointer-events: none;
+            animation: clickRipple 0.6s ease-out;
+            z-index: 9999;
+        }
+
+        @keyframes clickRipple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .dark-mode-toggle.dark i:before {
+            content: "\f185"; /* sun icon */
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a5568 100%);
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .container {
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .feature-card {
+            background: rgba(45, 55, 72, 0.9);
+            border: 2px solid rgba(72, 187, 120, 0.2);
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .feature-card h3 {
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .modal-content {
+            background: rgba(45, 55, 72, 0.95);
+            border: 2px solid rgba(72, 187, 120, 0.2);
+        }
+
+        body.dark-mode .modal-header {
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        body.dark-mode .tab-content {
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .music-player {
+            background: rgba(45, 55, 72, 0.95);
+            border: 2px solid rgba(72, 187, 120, 0.2);
+        }
+
+        body.dark-mode .music-player-header {
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        body.dark-mode .achievement-card {
+            background: rgba(45, 55, 72, 0.9);
+            border: 2px solid rgba(72, 187, 120, 0.2);
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .achievement-card h3 {
+            color: #e2e8f0;
+        }
+
+        body.dark-mode footer {
+            background: rgba(45, 55, 72, 0.8);
+        }
+
+        /* Scroll-triggered animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 50%, #ffd3b6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: loadingFadeOut 3s ease-in-out 2s forwards;
+        }
+
+        .loading-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px;
+        }
+
+        .loading-logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        .loading-logo span {
+            display: inline-block;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        .loading-progress {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-loading {
+            width: 100%;
+            height: 8px;
+            background: rgba(72, 187, 120, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill-loading {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 4px;
+            width: 0%;
+            animation: loadingProgress 2.5s ease-out forwards;
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            70% { width: 90%; }
+            100% { width: 100%; }
+        }
+
+        .loading-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            font-weight: 500;
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-particles {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .loading-particle {
+            font-size: 2rem;
+            animation: particleFloat 2s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .loading-particle:nth-child(1) { animation-delay: 0s; }
+        .loading-particle:nth-child(2) { animation-delay: 0.5s; }
+        .loading-particle:nth-child(3) { animation-delay: 1s; }
+        .loading-particle:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes loadingFadeOut {
+            0%, 80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes textGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .music-player {
+                bottom: 10px;
+                right: 10px;
+                width: calc(100vw - 20px);
+                max-width: 350px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .loading-content {
+                padding: 20px;
+            }
+
+            .loading-logo {
+                font-size: 2.5rem;
+            }
+
+            .loading-particles {
+                gap: 15px;
+            }
+
+            .loading-particle {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="container">
-        <h1>Chào mừng đến với Luong Skibidi! 🎉</h1>
-    <p>Đây là trang web cá nhân vui vẻ và sáng tạo.</p>
-    <div class="skibidi">Skibidi Bop Bop! 💥</div>
-    <button onclick="window.location.href='home.html'">Click Me!</button>
-
-    <div class="content">
-        <h2>Về Luong Skibidi</h2>
-        <p>Luong Skibidi là một người yêu thích công nghệ, lập trình và những điều vui vẻ. Trang web này được tạo để thể hiện sự sáng tạo và niềm vui.</p>
-        <ul>
-            <li>💻 Thích lập trình web</li>
-            <li>🎮 Yêu thích game</li>
-            <li>🎵 Nghe nhạc chill</li>
-        </ul>
+    <!-- Ngọt Band Particles -->
+    <div class="ngot-particles">
+        <div class="ngot-particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="ngot-particle" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="ngot-particle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="ngot-particle" style="left: 40%; animation-delay: 0.5s;"></div>
+        <div class="ngot-particle" style="left: 50%; animation-delay: 1.5s;"></div>
+        <div class="ngot-particle" style="left: 60%; animation-delay: 2.5s;"></div>
+        <div class="ngot-particle" style="left: 70%; animation-delay: 1.2s;"></div>
+        <div class="ngot-particle" style="left: 80%; animation-delay: 0.8s;"></div>
+        <div class="ngot-particle" style="left: 90%; animation-delay: 1.8s;"></div>
+        <div class="ngot-particle" style="left: 15%; animation-delay: 2.2s;"></div>
+        <div class="ngot-particle" style="left: 25%; animation-delay: 0.3s;"></div>
+        <div class="ngot-particle" style="left: 35%; animation-delay: 1.7s;"></div>
+        <div class="ngot-particle" style="left: 45%; animation-delay: 2.8s;"></div>
+        <div class="ngot-particle" style="left: 55%; animation-delay: 0.9s;"></div>
+        <div class="ngot-particle" style="left: 65%; animation-delay: 1.4s;"></div>
     </div>
 
-        <footer>
-            <p>&copy; 2025 Luong Skibidi. Tất cả quyền được bảo lưu.</p>
-            <p>Liên hệ: luongskibidi@example.com</p>
-        </footer>
+    <!-- Floating Elements -->
+    <div class="floating-elements">
+        <div class="floating-element">☕</div>
+        <div class="floating-element">🌱</div>
+        <div class="floating-element">📚</div>
+        <div class="floating-element">🎧</div>
+        <div class="floating-element">🪴</div>
+        <div class="floating-element ngot-text">Ngọt</div>
+        <div class="floating-element band-text">Band</div>
+        <div class="floating-element ngot-text">Ngọt</div>
+        <div class="floating-element band-text">Band</div>
+        <div class="floating-element ngot-text">Ngọt</div>
+        <div class="floating-element band-text">Band</div>
+        <div class="floating-element ngot-text">Ngọt</div>
+        <div class="floating-element band-text">Band</div>
+        <div class="floating-element ngot-text">Ngọt</div>
+        <div class="floating-element band-text">Band</div>
     </div>
 
-    <div id="uiModal" class="modal">
+    <header>
+        <div class="container">
+            <h1 class="logo">🌱 Luong Lofi 🌱</h1>
+            <p class="subtitle">Chill Developer in a Cozy Digital Garden</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <h3>LOFI CODING</h3>
+                <p>Sipping coffee while crafting clean, thoughtful code. Development with a relaxed vibe and careful attention! ☕💻</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>GENTLE GAMING</h3>
+                <p>Creating games that feel like a warm hug. Immersive experiences designed for comfort and joy! 🎮🕊️</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h3>GROWING MIND</h3>
+                <p>Mind growing like a garden in spring! Nurturing ideas and watching them blossom into beautiful solutions! 🌱🧠</p>
+            </div>
+        </section>
+
+        <div style="text-align: center;">
+            <button class="btn" onclick="window.location.href='home.html'">🏠 vào home 🏠</button>
+        </div>
+
+        <!-- Achievements Section -->
+        <section class="achievements">
+            <div class="container">
+                <h2 class="section-title">🌟 Garden Achievements 🌟</h2>
+                <div class="achievements-grid">
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>Code Master</h3>
+                        <p>500+ lines of beautiful code</p>
+                        <div class="achievement-progress">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Game Developer</h3>
+                        <p>10+ games created</p>
+                        <div class="achievement-progress">
+                            <div class="progress-fill" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <h3>Coffee Drinker</h3>
+                        <p>1000+ cups consumed</p>
+                        <div class="achievement-progress">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Creative Mind</h3>
+                        <p>Infinite ideas generated</p>
+                        <div class="achievement-progress">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="rizzModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeUI()">&times;</span>
-            <div class="tabs">
-                <button class="tab-button active" onclick="openTab('main')">Main</button>
-                <button class="tab-button" onclick="openTab('script')">Script</button>
-                <button class="tab-button" onclick="openTab('client')">Client</button>
-                <button class="tab-button" onclick="openTab('profile')">Profile</button>
+            <div class="modal-header">
+                <h2>🌿 LOFI GARDEN 🌿</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
             </div>
-            <div id="main" class="tab-content active">
-                <h2>Main</h2>
-                <p>Chào mừng đến với Luong Skibidi Hub!</p>
-                <p>Đây là trang chính với các tính năng tuyệt vời.</p>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="openTab('main')">
+                        🏡 HOME
+                    </button>
+                    <button class="tab-btn" onclick="openTab('scripts')">
+                        💻 SCRIPTS
+                    </button>
+                    <button class="tab-btn" onclick="openTab('client')">
+                        🌱 CLIENT
+                    </button>
+                    <button class="tab-btn" onclick="openTab('profile')">
+                        👤 ABOUT
+                    </button>
+                </div>
+
+                <div id="main" class="tab-content active">
+                    <h3>🏡 WELCOME TO MY LOFI GARDEN! 🏡</h3>
+                    <p>☕ <strong>Take a deep breath...</strong> Welcome to my cozy corner of the internet! 🌱</p>
+                    <p>🌿 This is where <span class="highlight">creativity grows gently</span> - a peaceful fusion of code and nature! ✨</p>
+                    <p>🌸 Explore projects that bloom like flowers in spring! 🚀</p>
+                    <p>🎯 Ready for some relaxation? Let's wander through the garden! 🌼🕊️</p>
+                </div>
+
+                <div id="scripts" class="tab-content">
+                    <h3>💻 GENTLE GARDEN SCRIPTS 💻</h3>
+                    <p>🌱 <strong>GARDEN-FRESH SCRIPTS</strong> for Roblox that make your gaming experience peaceful:</p>
+                    <p>• 🍎 <strong>AUTO FRUIT HARMONY</strong> - Farming fruits so smooth it feels like a gentle breeze! 🍎🌸</p>
+                    <p>• ⚔️ <strong>BLOX FRUITS SERENITY</strong> - Combat system so balanced it brings inner peace! ⚔️🕊️</p>
+                    <p>• 🎪 <strong>KAITUN TRANQUILITY</strong> - Multi-tool scripts that flow like a calm river! 🎪🌊</p>
+                    <p>• ✨ <strong>MORE PEACEFUL SCRIPTS</strong> carefully nurtured with loving care! ✨🌿</p>
+                    <p class="status">☕ ALL SCRIPTS ARE GARDEN-CERTIFIED AND READY TO BLOOM! ☕</p>
+                </div>
+
+                <div id="client" class="tab-content">
+                    <h3>🌱 GARDEN CLIENT HARMONY 🌱</h3>
+                    <p>🎪 <strong>CLIENT:</strong> <span class="highlight">EXECUTOR TDT GARDEN EDITION</span> 🎪💎</p>
+                    <p>📦 <strong>VERSION:</strong> HARMONY EDITION - Latest Garden Update 📦🌸</p>
+                    <p>🟢 <strong>STATUS:</strong> <span class="status">ONLINE & MAXIMUM GARDEN PEACE!</span> 🟢☕</p>
+                    <p>💎 Executor so gentle it doesn't need keys - pure garden energy! 💎🌿</p>
+                    <p>🎯 <strong>24/7 GARDEN UPTIME</strong> - Always ready to nurture your scripts! 🌙🌸</p>
+                </div>
+
+                <div id="profile" class="tab-content">
+                    <h3>👤 LOFI GARDENER 🌿</h3>
+                    <p>🎭 <strong>NAME:</strong> Luong Lofi - The Gentle Gardener 🎭🌱</p>
+                    <p>💻 <strong>GIG:</strong> Full-Stack Developer with Maximum Garden Peace 💻☕</p>
+                    <p>🎮 <strong>VIBES:</strong> Coding, Gaming, Creating Cozy Content 🎮🌸</p>
+                    <p>🌟 <strong>STYLE:</strong> Creative, Calm, Always Nurturing Growth 🌟🌿</p>
+                    <p>🎨 I create stuff so comforting it makes everyone feel at home! 😊💕</p>
+                    <p>🚀 <strong>MOTTO:</strong> "Code with Care, Create with Love!" 💖🌱</p>
+                </div>
             </div>
-            <div id="script" class="tab-content">
-                <h2>Scripts</h2>
-                <ul>
-                    <li>Auto Fruit</li>
-                    <li>Blox Fruits</li>
-                    <li>Kaitun Scripts</li>
-                    <li>Và nhiều hơn nữa...</li>
-                </ul>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Lofi Music Player -->
+    <div class="music-player">
+        <div class="music-player-header">
+            <i class="fas fa-music"></i>
+            <span>Lofi Beats</span>
+            <button class="player-toggle" onclick="togglePlayer()">
+                <i class="fas fa-chevron-up"></i>
+            </button>
+        </div>
+        <div class="music-player-body">
+            <div class="album-art">
+                <div class="album-cover">
+                    <i class="fas fa-headphones"></i>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Chill Garden Vibes</div>
+                    <div class="track-artist">Luong Lofi</div>
+                </div>
             </div>
-            <div id="client" class="tab-content">
-                <h2>Client</h2>
-                <p>Thông tin về client: Executor TDT No Key</p>
-                <p>Phiên bản: Latest</p>
-                <p>Trạng thái: Online</p>
+            <div class="player-controls">
+                <button class="control-btn" onclick="prevTrack()">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" onclick="togglePlay()">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" onclick="nextTrack()">
+                    <i class="fas fa-step-forward"></i>
+                </button>
             </div>
-            <div id="profile" class="tab-content">
-                <h2>Profile</h2>
-                <p>Tên: Luong Skibidi</p>
-                <p>Nghề nghiệp: Developer</p>
-                <p>Sở thích: Coding, Gaming</p>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="time-display">
+                    <span class="current-time">0:00</span>
+                    <span class="total-time">3:24</span>
+                </div>
+            </div>
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" class="volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Luong Lofi - GARDEN FOREVER! 🌱🌿</p>
+        <p>Made with 💖, ☕, and lots of GARDEN PEACE! 🕊️</p>
+    </footer>
+
+    <!-- Hidden Audio Elements -->
+    <audio id="track1" preload="metadata">
+        <source src="1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="track2" preload="metadata">
+        <source src="2.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="track3" preload="metadata">
+        <source src="3.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                🌱 <span>Luong Lofi</span> 🌱
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar-loading">
+                    <div class="progress-fill-loading" id="loading-progress-fill"></div>
+                </div>
+                <div class="loading-text" id="loading-text">Loading garden...</div>
+            </div>
+            <div class="loading-particles">
+                <div class="loading-particle">☕</div>
+                <div class="loading-particle">🌱</div>
+                <div class="loading-particle">📚</div>
+                <div class="loading-particle">🎧</div>
             </div>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particles = [];
-        const mouse = { x: null, y: null, radius: 150 };
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-
-        class Particle {
-            constructor(x, y, size, color, weight) {
-                this.x = x;
-                this.y = y;
-                this.size = size;
-                this.color = color;
-                this.weight = weight;
-                this.originalSize = size;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-            update() {
-                this.size -= 0.02;
-                if (this.size < 0) {
-                    this.x = mouse.x + (Math.random() - 0.5) * 100;
-                    this.y = mouse.y + (Math.random() - 0.5) * 100;
-                    this.size = Math.random() * 8 + 3;
-                    this.originalSize = this.size;
-                    this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
-                }
-                if (mouse.x && mouse.y) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) {
-                        let force = (mouse.radius - distance) / mouse.radius;
-                        let angle = Math.atan2(dy, dx);
-                        this.x -= Math.cos(angle) * force * this.weight;
-                        this.y -= Math.sin(angle) * force * this.weight;
-                        this.size = Math.min(this.originalSize * (1 + force * 0.5), this.originalSize * 2);
-                    } else {
-                        this.size = Math.max(this.size - 0.1, this.originalSize * 0.5);
-                    }
-                }
-            }
+        // Modal functions
+        function openModal() {
+            document.getElementById('rizzModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
-        function init() {
-            particles = [];
-            for (let i = 0; i < 150; i++) {
-                let x = Math.random() * canvas.width;
-                let y = Math.random() * canvas.height;
-                let size = Math.random() * 8 + 3;
-                let color = `hsl(${Math.random() * 360}, 70%, 60%)`;
-                let weight = Math.random() * 0.8 + 0.2;
-                particles.push(new Particle(x, y, size, color, weight));
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            init();
-        });
-
-        function openUI() {
-            document.getElementById('uiModal').style.display = 'block';
-        }
-
-        function closeUI() {
-            document.getElementById('uiModal').style.display = 'none';
+        function closeModal() {
+            document.getElementById('rizzModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         function openTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-button');
-            tabs.forEach(tab => tab.classList.remove('active'));
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
         }
 
-        init();
-        animate();
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('rizzModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Music Player Functions
+        let isPlaying = false;
+        let currentTrack = 0;
+        let audioElements = [];
+        const tracks = [
+            { title: "Chill Garden Vibes", artist: "Luong Lofi", src: "1.mp3", elementId: "track1", duration: 204 },
+            { title: "Peaceful Coding", artist: "Luong Lofi", src: "2.mp3", elementId: "track2", duration: 186 },
+            { title: "Lofi Dreams", artist: "Luong Lofi", src: "3.mp3", elementId: "track3", duration: 234 }
+        ];
+
+        function togglePlayer() {
+            const player = document.querySelector('.music-player');
+            const toggleIcon = document.querySelector('.player-toggle i');
+
+            player.classList.toggle('collapsed');
+            toggleIcon.classList.toggle('fa-chevron-up');
+            toggleIcon.classList.toggle('fa-chevron-down');
+        }
+
+        function togglePlay() {
+            const playBtn = document.querySelector('.play-btn i');
+            const currentAudio = getCurrentAudioElement();
+
+            if (isPlaying) {
+                currentAudio.pause();
+                playBtn.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                // Pause all other tracks first
+                pauseAllTracks();
+
+                currentAudio.play().catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+                playBtn.classList.add('playing');
+                isPlaying = true;
+            }
+        }
+
+        function getCurrentAudioElement() {
+            const track = tracks[currentTrack];
+            let audioElement = document.getElementById(track.elementId);
+
+            if (!audioElement) {
+                console.error('Audio element not found:', track.elementId);
+                return null;
+            }
+
+            // Ensure event listeners are attached
+            if (!audioElement.hasEventListeners) {
+                audioElement.volume = 0.7;
+                audioElement.addEventListener('timeupdate', updateProgress);
+                audioElement.addEventListener('ended', nextTrack);
+                audioElement.addEventListener('loadedmetadata', () => {
+                    updateTimeDisplay(0);
+                });
+                audioElement.hasEventListeners = true;
+            }
+
+            return audioElement;
+        }
+
+        function pauseAllTracks() {
+            tracks.forEach(track => {
+                const audio = document.getElementById(track.elementId);
+                if (audio && !audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+        }
+
+        function updateProgress() {
+            const currentAudio = getCurrentAudioElement();
+            if (!currentAudio || currentAudio.paused) return;
+
+            const progressFill = document.querySelector('.progress-fill');
+            const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+            progressFill.style.width = progress + '%';
+            updateTimeDisplay(progress);
+        }
+
+        function updateTimeDisplay(progress) {
+            const currentTimeEl = document.querySelector('.current-time');
+            const totalTimeEl = document.querySelector('.total-time');
+            const currentAudio = getCurrentAudioElement();
+
+            if (currentAudio && currentAudio.duration) {
+                const currentSeconds = Math.floor(currentAudio.currentTime);
+                const totalSeconds = Math.floor(currentAudio.duration);
+
+                currentTimeEl.textContent = formatTime(currentSeconds);
+                totalTimeEl.textContent = formatTime(totalSeconds);
+            } else {
+                // Fallback for when audio is not loaded
+                const currentTrackDuration = tracks[currentTrack].duration;
+                const currentSeconds = Math.floor((progress / 100) * currentTrackDuration);
+
+                currentTimeEl.textContent = formatTime(currentSeconds);
+                totalTimeEl.textContent = formatTime(currentTrackDuration);
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function prevTrack() {
+            // Pause current track
+            const currentAudio = getCurrentAudioElement();
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+            updateTrackInfo();
+
+            if (isPlaying) {
+                const newAudio = getCurrentAudioElement();
+                if (newAudio) {
+                    newAudio.play().catch(e => console.log('Audio play failed:', e));
+                }
+            }
+        }
+
+        function nextTrack() {
+            // Pause current track
+            const currentAudio = getCurrentAudioElement();
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            currentTrack = (currentTrack + 1) % tracks.length;
+            updateTrackInfo();
+
+            if (isPlaying) {
+                const newAudio = getCurrentAudioElement();
+                if (newAudio) {
+                    newAudio.play().catch(e => console.log('Audio play failed:', e));
+                }
+            }
+        }
+
+        function updateTrackInfo() {
+            const trackTitle = document.querySelector('.track-title');
+            const trackArtist = document.querySelector('.track-artist');
+
+            trackTitle.textContent = tracks[currentTrack].title;
+            trackArtist.textContent = tracks[currentTrack].artist;
+        }
+
+        function setVolume(value) {
+            // Set volume for all audio elements
+            tracks.forEach(track => {
+                const audio = document.getElementById(track.elementId);
+                if (audio) {
+                    audio.volume = value / 100;
+                }
+            });
+        }
+
+        // Progress bar click to seek
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.addEventListener('click', function(e) {
+                const currentAudio = getCurrentAudioElement();
+                if (!currentAudio || !currentAudio.duration) return;
+
+                const rect = progressBar.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const percentage = clickX / rect.width;
+                const newTime = percentage * currentAudio.duration;
+
+                currentAudio.currentTime = newTime;
+            });
+        });
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start loading screen
+            initLoadingScreen();
+
+            // Initialize other features after loading
+            setTimeout(() => {
+                updateTrackInfo();
+                initScrollAnimations();
+                initParticleInteraction();
+            }, 3000); // Wait for loading screen to finish
+        });
+
+        // Loading Screen
+        function initLoadingScreen() {
+            const loadingTexts = [
+                "Loading garden...",
+                "Planting seeds...",
+                "Growing flowers...",
+                "Brewing coffee...",
+                "Ready to bloom! 🌸"
+            ];
+
+            let textIndex = 0;
+            const loadingTextEl = document.getElementById('loading-text');
+            const progressFill = document.getElementById('loading-progress-fill');
+
+            // Update loading text every 600ms
+            const textInterval = setInterval(() => {
+                textIndex = (textIndex + 1) % loadingTexts.length;
+                loadingTextEl.textContent = loadingTexts[textIndex];
+            }, 600);
+
+            // Clean up after loading completes
+            setTimeout(() => {
+                clearInterval(textInterval);
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.display = 'none';
+            }, 3000);
+        }
+
+        // Scroll-triggered animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe achievement cards
+            document.querySelectorAll('.achievement-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Particle mouse interaction
+        function initParticleInteraction() {
+            const particles = document.querySelectorAll('.ngot-particle');
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                particles.forEach((particle, index) => {
+                    const rect = particle.getBoundingClientRect();
+                    const particleX = rect.left + rect.width / 2;
+                    const particleY = rect.top + rect.height / 2;
+
+                    const distance = Math.sqrt(
+                        Math.pow(mouseX - particleX, 2) +
+                        Math.pow(mouseY - particleY, 2)
+                    );
+
+                    if (distance < 100) {
+                        const angle = Math.atan2(mouseY - particleY, mouseX - particleX);
+                        const force = (100 - distance) / 100;
+                        const moveX = Math.cos(angle) * force * 20;
+                        const moveY = Math.sin(angle) * force * 20;
+
+                        particle.style.transform = `translate(${moveX}px, ${moveY}px) scale(${1 + force * 0.5})`;
+                        particle.style.opacity = 0.8 + force * 0.2;
+                    } else {
+                        particle.style.transform = 'translate(0px, 0px) scale(1)';
+                        particle.style.opacity = 0.3 + (index % 3) * 0.2;
+                    }
+                });
+            });
+        }
+
+        // Click effects
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.feature-card') || e.target.closest('.achievement-card')) {
+                createClickEffect(e.clientX, e.clientY);
+            }
+        });
+
+        function createClickEffect(x, y) {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = x + 'px';
+            effect.style.top = y + 'px';
+            document.body.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 600);
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const body = document.body;
+            const toggleBtn = document.querySelector('.dark-mode-toggle');
+
+            body.classList.toggle('dark-mode');
+            toggleBtn.classList.toggle('dark');
+
+            // Save preference to localStorage
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Load dark mode preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModePreference = localStorage.getItem('darkMode');
+            if (darkModePreference === 'true') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.dark-mode-toggle').classList.add('dark');
+            }
+        });
     </script>
 </body>
 </html>
