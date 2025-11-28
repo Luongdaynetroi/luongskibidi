@@ -403,6 +403,32 @@
                 flex-direction: column;
             }
         }
+
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .cookie-consent button {
+            background: #667eea;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cookie-consent button:hover {
+            background: #764ba2;
+        }
     </style>
 </head>
 <body>
@@ -417,16 +443,14 @@
         </div>
 
         <!-- Quảng cáo dưới header -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128"
-             crossorigin="anonymous"></script>
         <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="autorelaxed"
-             data-ad-client="ca-pub-9123618090672128"
-             data-ad-slot="9020386143"></ins>
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-9123618090672128"
+     data-ad-slot="9020386143"></ins>
         <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="showForm('login')">Đăng Nhập</button>
@@ -766,6 +790,30 @@
         }
         animateParticles();
 
+        // Cookie Consent
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookiesAccepted', 'false');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        // Check cookie consent on load
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.querySelector('.cookie-consent').style.display = 'block';
+            }
+        });
     </script>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent" style="display: none;">
+        <p>Website này sử dụng cookies để cải thiện trải nghiệm. Bằng cách tiếp tục sử dụng, bạn đồng ý với <a href="#" style="color: #667eea;">Chính sách Cookie</a> và <a href="#" style="color: #667eea;">Chính sách Bảo mật</a> của chúng tôi.</p>
+        <button onclick="acceptCookies()">Chấp nhận</button>
+        <button onclick="declineCookies()">Từ chối</button>
+    </div>
 </body>
 </html>
