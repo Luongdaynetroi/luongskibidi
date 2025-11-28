@@ -141,6 +141,32 @@
         a.back:hover {
             text-decoration: underline;
         }
+
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .cookie-consent button {
+            background: #4ecdc4;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cookie-consent button:hover {
+            background: #45b7d1;
+        }
     </style>
 </head>
 <body>
@@ -148,32 +174,30 @@
     <input type="text" id="searchInput" placeholder="Tìm script..." style="width: 100%; max-width: 400px; padding: 10px; margin-bottom: 20px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px;">
 
     <!-- Quảng cáo trên cùng -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128"
-         crossorigin="anonymous"></script>
     <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-9123618090672128"
-         data-ad-slot="9020386143"></ins>
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-9123618090672128"
+     data-ad-slot="9020386143"></ins>
     <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
+     (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showScriptTab('all')">All</button>
-        <button class="tab-btn" onclick="showScriptTab('bloxfruit')">Blox Fruit</button>
-        <button class="tab-btn" onclick="showScriptTab('99night')">99 Night</button>
-        <button class="tab-btn" onclick="showScriptTab('free')">Code Tự Làm</button>
-        <button class="tab-btn" onclick="showScriptTab('brainrot')">Steal a Brainrot</button>
-        <button class="tab-btn" onclick="showScriptTab('horror')">Horror game</button>
-        <button class="tab-btn" onclick="showScriptTab('fixlag')">FixLag</button>
-        <button class="tab-btn" onclick="showScriptTab('plant')">Plant vs Brainot/fisch</button>
-        <button class="tab-btn" onclick="showScriptTab('kaitunbf')">Kaitun Blox Fruits</button>
-        <button class="tab-btn" onclick="showScriptTab('tonghop')">Tổng Hợp(Description)</button>
-        <button class="tab-btn" onclick="showScriptTab('misc')">Misc</button>
-        <button class="tab-btn" onclick="showScriptTab('animation')">Animation</button>
-        <button class="tab-btn" onclick="showScriptTab('aim')">aim</button>
-        <button class="tab-btn" onclick="showScriptTab('linhtinh')">linh tinh</button>
+        <button class="tab-btn active" onclick="showScriptTab('all', this)">All</button>
+        <button class="tab-btn" onclick="showScriptTab('bloxfruit', this)">Blox Fruit</button>
+        <button class="tab-btn" onclick="showScriptTab('99night', this)">99 Night</button>
+        <button class="tab-btn" onclick="showScriptTab('free', this)">Code Tự Làm</button>
+        <button class="tab-btn" onclick="showScriptTab('brainrot', this)">Steal a Brainrot</button>
+        <button class="tab-btn" onclick="showScriptTab('horror', this)">Horror game</button>
+        <button class="tab-btn" onclick="showScriptTab('fixlag', this)">FixLag</button>
+        <button class="tab-btn" onclick="showScriptTab('plant', this)">Plant vs Brainot/fisch</button>
+        <button class="tab-btn" onclick="showScriptTab('kaitunbf', this)">Kaitun Blox Fruits</button>
+        <button class="tab-btn" onclick="showScriptTab('tonghop', this)">Tổng Hợp(Description)</button>
+        <button class="tab-btn" onclick="showScriptTab('misc', this)">Misc</button>
+        <button class="tab-btn" onclick="showScriptTab('animation', this)">Animation</button>
+        <button class="tab-btn" onclick="showScriptTab('aim', this)">aim</button>
+        <button class="tab-btn" onclick="showScriptTab('linhtinh', this)">linh tinh</button>
     </div>
     <div id="all" class="script-list active"></div>
     <div id="bloxfruit" class="script-list"></div>
@@ -216,7 +240,7 @@
 
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const particleCount = 150;
+        const particleCount = window.innerWidth < 768 ? 60 : 100; // Giảm cho mobile
         const connectionDistance = 120;
         let mouseX = 0;
         let mouseY = 0;
@@ -497,13 +521,13 @@
             generateCards(tab);
         });
 
-        function showScriptTab(tabName) {
+        function showScriptTab(tabName, button) {
             const lists = document.querySelectorAll('.script-list');
             const buttons = document.querySelectorAll('.tab-btn');
             lists.forEach(list => list.classList.remove('active'));
             buttons.forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            button.classList.add('active');
         }
 
         function viewScript(scriptId) {
@@ -551,6 +575,31 @@
         }
 
         document.getElementById('searchInput').addEventListener('input', filterScripts);
+
+        // Cookie Consent
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookiesAccepted', 'false');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        // Check cookie consent on load
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.querySelector('.cookie-consent').style.display = 'block';
+            }
+        });
     </script>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent" style="display: none;">
+        <p>Website này sử dụng cookies để cải thiện trải nghiệm. Bằng cách tiếp tục sử dụng, bạn đồng ý với <a href="#" style="color: #4ecdc4;">Chính sách Cookie</a> và <a href="#" style="color: #4ecdc4;">Chính sách Bảo mật</a> của chúng tôi.</p>
+        <button onclick="acceptCookies()">Chấp nhận</button>
+        <button onclick="declineCookies()">Từ chối</button>
+    </div>
 </body>
 </html>
