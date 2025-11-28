@@ -33,11 +33,14 @@
             margin-bottom: 30px;
         }
         .executor-list {
-            display: grid;
+            display: none;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             max-width: 1000px;
             margin: 0 auto;
+        }
+        .executor-list.active {
+            display: grid;
         }
         .executor-card {
             background: rgba(255, 255, 255, 0.1);
@@ -85,12 +88,6 @@
         .tab-btn.active {
             background: #ff6b6b;
         }
-        .executor-list {
-            display: none;
-        }
-        .executor-list.active {
-            display: grid;
-        }
         a.back {
             color: #fff;
             text-decoration: none;
@@ -101,26 +98,49 @@
         a.back:hover {
             text-decoration: underline;
         }
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .cookie-consent button {
+            background: #4ecdc4;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cookie-consent button:hover {
+            background: #45b7d1;
+        }
     </style>
 </head>
 <body>
     <h1>Executor cho Roblox</h1>
 
     <!-- Quảng cáo trên cùng -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128"
-         crossorigin="anonymous"></script>
     <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="autorelaxed"
-         data-ad-client="ca-pub-9123618090672128"
-         data-ad-slot="9020386143"></ins>
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-9123618090672128"
+     data-ad-slot="9020386143"></ins>
     <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
+     (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showExecutorTab('pc')">PC</button>
-        <button class="tab-btn" onclick="showExecutorTab('android')">Android</button>
+        <button class="tab-btn active" onclick="showExecutorTab('pc', this)">PC</button>
+        <button class="tab-btn" onclick="showExecutorTab('android', this)">Android</button>
     </div>
     <div id="pc" class="executor-list active">
         <div class="executor-card">
@@ -180,6 +200,13 @@
 
     <div class="particles" id="particles"></div>
 
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent" style="display: none;">
+        <p>Website này sử dụng cookies để cải thiện trải nghiệm. Bằng cách tiếp tục sử dụng, bạn đồng ý với <a href="#" style="color: #4ecdc4;">Chính sách Cookie</a> và <a href="#" style="color: #4ecdc4;">Chính sách Bảo mật</a> của chúng tôi.</p>
+        <button onclick="acceptCookies()">Chấp nhận</button>
+        <button onclick="declineCookies()">Từ chối</button>
+    </div>
+
     <script>
         // Particles
         const canvas = document.createElement('canvas');
@@ -195,7 +222,7 @@
 
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const particleCount = 150;
+        const particleCount = window.innerWidth < 768 ? 60 : 100; // Giảm cho mobile
         const connectionDistance = 120;
         let mouseX = 0;
         let mouseY = 0;
@@ -283,14 +310,32 @@
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
-        function showExecutorTab(tabName) {
+        function showExecutorTab(tabName, button) {
             const lists = document.querySelectorAll('.executor-list');
             const buttons = document.querySelectorAll('.tab-btn');
             lists.forEach(list => list.classList.remove('active'));
             buttons.forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            button.classList.add('active');
         }
+
+        // Cookie Consent
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookiesAccepted', 'false');
+            document.querySelector('.cookie-consent').style.display = 'none';
+        }
+
+        // Check cookie consent on load
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.querySelector('.cookie-consent').style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>>
