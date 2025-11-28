@@ -87,6 +87,122 @@
             transform: scale(1.2);
         }
 
+        .floating-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        .floating-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .floating-toggle.active {
+            background: #4ecdc4;
+        }
+
+        .floating-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 1.5rem;
+            animation: floatBtn 3s ease-in-out infinite;
+        }
+
+        .floating-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .hover-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(78, 205, 196, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 1s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% { opacity: 1; transform: scale(1) translateY(0); }
+            100% { opacity: 0; transform: scale(0) translateY(-20px); }
+        }
+
+        .burst-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 107, 107, 0.9);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: burst 0.6s ease-out forwards;
+        }
+
+        @keyframes burst {
+            0% { opacity: 1; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes floatBtn {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .floating-btn.dragging {
+            cursor: grabbing;
+            z-index: 1001;
+        }
+
+        .trail {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(78, 205, 196, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(0); }
+        }
+
+        .floating-btn.appear {
+            animation: appearFromNav 0.8s ease-out;
+        }
+
+        @keyframes appearFromNav {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.7; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
         nav ul {
             display: flex;
             list-style: none;
@@ -556,6 +672,7 @@
     <nav>
         <div class="container">
             <a href="https://bantuyenngondoclaphcm.vercel.app/" class="flag-btn" title="Bản tuyên ngôn độc lập HCM">🇻🇳</a>
+            <button class="floating-toggle" onclick="toggleFloating()" title="Toggle Floating Buttons">🚀</button>
             <div class="logo">luongdaynetroi</div>
             <ul>
                 <li><a href="#home">Home</a></li>
@@ -604,6 +721,18 @@
                     <p>Luôn đổi mới và học hỏi điều mới</p>
                 </div>
             </div>
+
+            <!-- Quảng cáo giữa features -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9123618090672128"
+                 crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="autorelaxed"
+                 data-ad-client="ca-pub-9123618090672128"
+                 data-ad-slot="9020386143"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
     </section>
 
@@ -723,6 +852,10 @@
                 this.x += this.vx;
                 this.y += this.vy;
 
+                // Damping
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+
                 if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
             }
@@ -837,7 +970,7 @@
             '3.mp3',
             '4.mp3'
         ];
-        let currentSongIndex = Math.floor(Math.random() * songs.length);
+        let currentSongIndex = 0; // Always start with 1.mp3
         bgMusic.src = songs[currentSongIndex];
 
         // Auto-play random song on load
@@ -897,6 +1030,153 @@
 
         function cancelLogout() {
             document.getElementById('logout-modal').style.display = 'none';
+        }
+
+        // Floating buttons
+        let floatingMode = false;
+        let floatingButtons = [];
+        let animationId;
+
+        function toggleFloating() {
+            floatingMode = !floatingMode;
+            const toggleBtn = document.querySelector('.floating-toggle');
+            toggleBtn.classList.toggle('active', floatingMode);
+
+            if (floatingMode) {
+                createFloatingButtons();
+                animateFloating();
+            } else {
+                removeFloatingButtons();
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function animateFloating() {
+            floatingButtons.forEach(btn => {
+                if (btn.isDragging) return; // Skip if being dragged
+
+                let x = parseFloat(btn.style.left);
+                let y = parseFloat(btn.style.top);
+
+                x += btn.vx;
+                y += btn.vy;
+
+                // Bounce off edges
+                if (x <= 0 || x >= window.innerWidth - 60) btn.vx *= -1;
+                if (y <= 0 || y >= window.innerHeight - 60) btn.vy *= -1;
+
+                btn.style.left = `${x}px`;
+                btn.style.top = `${y}px`;
+            });
+
+            animationId = requestAnimationFrame(animateFloating);
+        }
+
+        function createFloatingButtons() {
+            const buttons = [
+                { icon: 'fas fa-play', action: () => window.open('executor.html', '_blank'), title: 'Executor' },
+                { icon: 'fas fa-code', action: () => window.open('script.html', '_blank'), title: 'Script' },
+                { icon: 'fas fa-gamepad', action: () => window.open('soulknight.html', '_blank'), title: 'Soul Knight' },
+                { icon: 'fas fa-dove', action: () => window.open('flappybird.html', '_blank'), title: 'Flappy Bird' }
+            ];
+
+            buttons.forEach((btn, index) => {
+                const floatingBtn = document.createElement('div');
+                floatingBtn.className = 'floating-btn';
+                floatingBtn.innerHTML = `<i class="${btn.icon}"></i>`;
+                floatingBtn.title = btn.title;
+                floatingBtn.style.left = `${Math.random() * (window.innerWidth - 60)}px`;
+                floatingBtn.style.top = `${Math.random() * (window.innerHeight - 60)}px`;
+                floatingBtn.classList.add('appear');
+                setTimeout(() => floatingBtn.classList.remove('appear'), 800);
+
+                // Add floating motion
+                floatingBtn.vx = (Math.random() - 0.5) * 0.5;
+                floatingBtn.vy = (Math.random() - 0.5) * 0.5;
+
+                let isDragging = false;
+                let startX, startY, initialX, initialY;
+                let lastTrailTime = 0;
+
+                floatingBtn.addEventListener('mousedown', (e) => {
+                    isDragging = false;
+                    floatingBtn.isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialX = parseFloat(floatingBtn.style.left);
+                    initialY = parseFloat(floatingBtn.style.top);
+                    floatingBtn.classList.add('dragging');
+
+                    const mouseMove = (e) => {
+                        const dx = e.clientX - startX;
+                        const dy = e.clientY - startY;
+                        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                            isDragging = true;
+                        }
+                        floatingBtn.style.left = `${initialX + dx}px`;
+                        floatingBtn.style.top = `${initialY + dy}px`;
+
+                        // Create trail (throttled)
+                        const now = Date.now();
+                        if (now - lastTrailTime > 50) {
+                            lastTrailTime = now;
+                            const trail = document.createElement('div');
+                            trail.className = 'trail';
+                            trail.style.left = `${initialX + dx + 30}px`;
+                            trail.style.top = `${initialY + dy + 30}px`;
+                            document.body.appendChild(trail);
+                            setTimeout(() => trail.remove(), 500);
+                        }
+                    };
+
+                    const mouseUp = () => {
+                        floatingBtn.classList.remove('dragging');
+                        floatingBtn.isDragging = false;
+                        document.removeEventListener('mousemove', mouseMove);
+                        document.removeEventListener('mouseup', mouseUp);
+                        if (!isDragging) {
+                            btn.action();
+                        }
+                    };
+
+                    document.addEventListener('mousemove', mouseMove);
+                    document.addEventListener('mouseup', mouseUp);
+                });
+
+                // Hover particles
+                floatingBtn.addEventListener('mouseenter', () => {
+                    for (let i = 0; i < 5; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'hover-particle';
+                        particle.style.left = `${Math.random() * 60}px`;
+                        particle.style.top = `${Math.random() * 60}px`;
+                        floatingBtn.appendChild(particle);
+                        setTimeout(() => particle.remove(), 1000);
+                    }
+                });
+
+                // Click burst
+                floatingBtn.addEventListener('click', (e) => {
+                    if (!isDragging) {
+                        for (let i = 0; i < 10; i++) {
+                            const particle = document.createElement('div');
+                            particle.className = 'burst-particle';
+                            particle.style.left = `${Math.random() * 60}px`;
+                            particle.style.top = `${Math.random() * 60}px`;
+                            document.body.appendChild(particle);
+                            setTimeout(() => particle.remove(), 600);
+                        }
+                    }
+                });
+
+                document.body.appendChild(floatingBtn);
+                floatingButtons.push(floatingBtn);
+            });
+        }
+
+        function removeFloatingButtons() {
+            floatingButtons.forEach(btn => btn.remove());
+            floatingButtons = [];
         }
     </script>
 </body>
